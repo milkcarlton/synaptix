@@ -13,23 +13,26 @@
 #include <thread>
 #include "macro.h"
 
-Macro::Macro(std::string name, unsigned short type, unsigned short keycode, ActivatorType value) {
+Macro::Macro(std::string name, ActivatorBind activator) {
 	this->macroName = name;
-	this->eventType = type;
-	this->keyBinding = keycode;
-	this->responseType = value;
-
     this->input = Input();
 	this->responseSequence = std::vector<PlaybackBind>();
+    setActivator(activator);
 }
+
+Macro::Macro(std::string name) : Macro(name, { 0, 0, NONE }) { }
 
 Macro::~Macro() {
 	
 }
 
+void Macro::setActivator(ActivatorBind activator) {
+    this->activatorBinding = activator;
+}
+
 bool Macro::isActivator(unsigned short type, unsigned short keycode, ActivatorType value) {
-	return (eventType == type && keyBinding == keycode && 
-		   (responseType == value || responseType == HELD));
+	return (activatorBinding.eventType == type && activatorBinding.keyBinding == keycode && 
+		   (activatorBinding.responseType == value || activatorBinding.responseType == HELD));
 }
 
 void Macro::addResponse(unsigned short code, unsigned short time_held, unsigned short delay) {
@@ -40,11 +43,11 @@ void Macro::addResponse(unsigned short code, unsigned short time_held, unsigned 
 void Macro::repeatMacro() {
     while (doRepeat) 
         for (PlaybackBind b : responseSequence)
-            input.playBind(input.getSymToKeycode(b.code), b.delay, b.time_held); 
+            input.playBind(input.getSymToKeycode(b.code), b.state, b.delay); 
 }
 
 void Macro::playMacro(ActivatorType value) {
-    if (responseType == HELD) {
+    if (activatorBinding.responseType == HELD) {
         doRepeat = (value == 1); 
         if (value == PRESS) {
             std::thread repeatThread([this]() {
@@ -52,9 +55,9 @@ void Macro::playMacro(ActivatorType value) {
             });
             repeatThread.detach();
         }
-    } else if (value == responseType) {
+    } else if (value == activatorBinding.responseType) {
         for (PlaybackBind b : responseSequence) {
-            input.playBind(input.getSymToKeycode(b.code), b.delay, b.time_held); 
+            input.playBind(input.getSymToKeycode(b.code), b.state, b.delay); 
         }
     } 
 }

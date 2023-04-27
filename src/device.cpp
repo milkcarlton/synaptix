@@ -36,7 +36,7 @@ std::ifstream* MacroDevice::openDeviceStream() {
 void MacroDevice::governMacros() {
     while (running) {
 		input_event e = readDevice();
-        // Thread responses?
+        // Thread actions
         for (Macro& m : macros) {
             if (m.isActivator(e.type, e.code, ActivatorType(e.value))) 
                 m.playMacro(ActivatorType(e.value));

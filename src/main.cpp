@@ -6,17 +6,17 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
-#include <sys/time.h> 
+#include <sys/time.h>
+
+#include <unistd.h>
+#include <sys/capability.h>
 
 #include "macro.h"
 #include "device.h"
+#include "loader.h"
 #include "device_manager.h"
 
 using std::string, std::cout, std::endl;
-
-std::string rootDir() {
-	return static_cast<std::string>(getenv("XDG_CONFIG_HOME")) + "/synaptix";
-}
 
 char getSafeChar(std::string str, short pos) {
     if (pos >= 0 && pos < str.size()) return str.at(pos);
@@ -25,6 +25,8 @@ char getSafeChar(std::string str, short pos) {
 
 int parseRequest(int argc, int argn, char** argv) {
     DeviceManager dm;
+    Loader loader;
+
     int nextArg = argn;
     char fchar, schar, tchar;
     std::string str = "";
@@ -34,31 +36,24 @@ int parseRequest(int argc, int argn, char** argv) {
     schar = getSafeChar(str, 1);
     tchar = getSafeChar(str, 2);
     
+    seteuid(0);
     if (fchar == '-') {
         switch (schar) {
+            case 'l':
+                loader.load(dm);
+                while (true) {}
+                break; 
             case 'd':
                 if (argn < argc) {
                     std::string devicePath = argv[argn + 1];
                     
-                    Macro m = Macro("TestMacro", 1, 272, HELD);
+                    struct ActivatorBind activator = { 1, 272, HELD };
+                    Macro m = Macro("TestMacro", activator);
                     m.addResponse(XK_R, 0, 0);
                     m.addResponse(XK_Q, 0, 0);
                     dm.bindMacro(devicePath, m);
                     
                     while (true) {} 
-                    nextArg++; 
-                }
-                break;
-            case 'b':
-                if (argn < argc) {
-	                std::cout << "Loading Macros Test..." << std::endl;
-                    // Create as separate thread
-                    MacroDevice mdev = MacroDevice(argv[argn + 1]);
-                    Macro m = Macro("TestMacro", 1, 272, RELEASE);
-                    m.addResponse(XK_E, 0, 0);
-                    mdev.registerMacro(m);
-                    mdev.toggleMacros(true);
-                    mdev.governMacros();
                     nextArg++; 
                 }
                 break;
@@ -88,10 +83,9 @@ int parseRequest(int argc, int argn, char** argv) {
 }
 
 int main(int argc, char** argv) {
-    std::cout << "Initializing Macros.." << std::endl;
-    std::string devicePath = "/dev/input/event10";
-     
-    // TODO: set device & function flag separately
+    //std::cout << "EUID: " << geteuid() << " UID: " << getuid() << "\n";
+    uid_t euid = geteuid();
+    
     int nextArg = 0;
     while (true) {
         if (nextArg == -1) break;
