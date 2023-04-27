@@ -16,7 +16,7 @@ struct ActivatorBind {
 };
 
 struct PlaybackBind {
-	unsigned short code;
+	std::string bind;
 	unsigned short state;
 	unsigned short delay;
 };
@@ -27,12 +27,12 @@ class Macro {
         Macro(std::string name);
         ~Macro();
         void playMacro(ActivatorType value);
-        //for a loop macro, accept both values
         bool isActivator(unsigned short type, unsigned short keycode, ActivatorType value);
-        void addResponse(unsigned short code, unsigned short time_held, unsigned short delay);
+        void addResponse(std::string bind, unsigned short state, unsigned short delay);
         void setActivator(ActivatorBind activator);
     private:
         void repeatMacro();
+        void playMacro();
         std::string macroName; // file name of macro in config folder
         ActivatorBind activatorBinding;
         std::vector<PlaybackBind> responseSequence;

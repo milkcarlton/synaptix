@@ -24,7 +24,8 @@ class MacroDevice {
 		void startMacros();
 		void governMacros();
 		
-		void inspectDevice(unsigned short type);
+		void inspectDevice(unsigned short filterType);
+		void recordMacro(unsigned short filterType);
 		
 		bool isRunning();
 		bool toggleMacros();

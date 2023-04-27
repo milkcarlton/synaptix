@@ -35,15 +35,19 @@ bool Macro::isActivator(unsigned short type, unsigned short keycode, ActivatorTy
 		   (activatorBinding.responseType == value || activatorBinding.responseType == HELD));
 }
 
-void Macro::addResponse(unsigned short code, unsigned short time_held, unsigned short delay) {
-    struct PlaybackBind b = { code, time_held, delay };
+void Macro::addResponse(std::string bind, unsigned short state, unsigned short delay) {
+    struct PlaybackBind b = { bind, state, delay };
     this->responseSequence.push_back(PlaybackBind(b));
 }
 
+void Macro::playMacro() {
+    for (PlaybackBind b : this->responseSequence)
+        input.playBind(input.getStrToKeycode(b.bind), b.state, b.delay); 
+}
+
 void Macro::repeatMacro() {
-    while (doRepeat) 
-        for (PlaybackBind b : responseSequence)
-            input.playBind(input.getSymToKeycode(b.code), b.state, b.delay); 
+    while (doRepeat)
+		playMacro();
 }
 
 void Macro::playMacro(ActivatorType value) {
@@ -56,8 +60,6 @@ void Macro::playMacro(ActivatorType value) {
             repeatThread.detach();
         }
     } else if (value == activatorBinding.responseType) {
-        for (PlaybackBind b : responseSequence) {
-            input.playBind(input.getSymToKeycode(b.code), b.state, b.delay); 
-        }
+		playMacro();
     } 
 }

@@ -54,7 +54,7 @@ Macro Loader::loadMacro(std::string path) {
             }
 
             result.addResponse(
-                safeStrToNum(tokens[0]), 
+                tokens[0], 
                 safeStrToNum(tokens[1]), 
                 safeStrToNum(tokens[2]) 
             );

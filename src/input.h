@@ -18,6 +18,7 @@ class Input {
        Input();
        ~Input();
        unsigned int getSymToKeycode(unsigned int keysym);
+       unsigned int getStrToKeycode(std::string keyStr);
        void playBind(unsigned int keycode, unsigned short state, unsigned short delay = 0);
        void playBind(unsigned int keycode);
     private:

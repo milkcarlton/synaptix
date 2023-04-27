@@ -1,15 +1,19 @@
+#include <chrono>
+#include <thread>
 #include "input.h"
 
 Input::Input() {
     this->display = XOpenDisplay(NULL);
 }
 
-Input::~Input() {
-
-}
+Input::~Input() { }
 
 unsigned int Input::getSymToKeycode(unsigned int keysym) {
     return XKeysymToKeycode(display, keysym);
+}
+
+unsigned int Input::getStrToKeycode(std::string keyStr) {
+    return XKeysymToKeycode(display, XStringToKeysym(keyStr.c_str()));
 }
 
 void Input::playBind(unsigned int keycode) {
@@ -25,5 +29,5 @@ void Input::playBind(unsigned int keycode, unsigned short state, unsigned short 
         XTestFakeKeyEvent(display, keycode, state, 0);
     }
     XFlush(display);
-    //if (delay > 0) sleep(delay);
+    if (delay > 0) std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 }

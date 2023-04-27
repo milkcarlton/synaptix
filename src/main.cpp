@@ -43,14 +43,23 @@ int parseRequest(int argc, int argn, char** argv) {
                 loader.load(dm);
                 while (true) {}
                 break; 
+            case 'r':
+                if (argn < argc) {
+		            std::cout << "Monitoring Device Input..." << std::endl;
+                    MacroDevice mdev = MacroDevice(argv[argn + 1]);
+                    mdev.recordMacro(-1);
+                    nextArg++; 
+                }
+                break; 
             case 'd':
+                // Redesign for temporary macro binding / testing
                 if (argn < argc) {
                     std::string devicePath = argv[argn + 1];
                     
                     struct ActivatorBind activator = { 1, 272, HELD };
                     Macro m = Macro("TestMacro", activator);
-                    m.addResponse(XK_R, 0, 0);
-                    m.addResponse(XK_Q, 0, 0);
+                    //m.addResponse(XK_R, 0, 0);
+                    //m.addResponse(XK_Q, 0, 0);
                     dm.bindMacro(devicePath, m);
                     
                     while (true) {} 
