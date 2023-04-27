@@ -52,7 +52,7 @@ void Macro::repeatMacro() {
 
 void Macro::playMacro(ActivatorType value) {
     if (activatorBinding.responseType == HELD) {
-        doRepeat = (value == 1); 
+        doRepeat = (value > 0); 
         if (value == PRESS) {
             std::thread repeatThread([this]() {
                 repeatMacro();
