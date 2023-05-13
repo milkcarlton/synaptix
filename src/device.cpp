@@ -1,5 +1,6 @@
 #include <thread>
 #include <chrono>
+#include <filesystem>
 #include "device.h"
 
 using std::chrono::milliseconds;
@@ -7,6 +8,8 @@ using std::chrono::duration_cast;
 using std::chrono::system_clock;
 
 MacroDevice::MacroDevice(std::string path) {
+    if (!std::filesystem::exists(path))
+        throw std::invalid_argument("Device @ [\'" + path + "\'] not found!");
     this->devicePath = path;
     this->macros = std::vector<Macro>();
 	this->deviceStream = openDeviceStream();
@@ -33,7 +36,7 @@ input_event MacroDevice::readDevice() {
 
 std::ifstream* MacroDevice::openDeviceStream() {
 	std::ifstream* input_file = new std::ifstream();
-	std::cout << "Opening " << devicePath << std::endl;
+	std::cout << "Opening Device [\'" << devicePath << "\']" << std::endl;
 	input_file->open(devicePath, std::ios::binary | std::ios::in);
 	return input_file;
 }
@@ -41,18 +44,18 @@ std::ifstream* MacroDevice::openDeviceStream() {
 void MacroDevice::governMacros() {
     while (running) {
 		input_event e = readDevice();
-        // Thread actions 
         for (Macro& m : macros) {
-            if (m.isActivator(e.type, e.code, ActivatorType(e.value))) 
+            if (m.isActivator(e.type, e.code, ActivatorType(e.value)))
                 m.playMacro(ActivatorType(e.value));
 		}
     }
 }
 
-void MacroDevice::inspectDevice(unsigned short filterType) {
+void MacroDevice::inspectDevice(int typeFilter) {
+	std::cout << "Watching [\'" << devicePath << "\'] for event type: " << typeFilter << std::endl;
 	while (true) {
 		input_event e = readDevice();
-		if (e.type == EV_KEY || EV_KEY == -1) {
+		if (e.type == typeFilter || typeFilter == -1) {
 			std::cout << "[ " << devicePath << " ]" << std::endl;
 			std::cout << "\tType: " << e.type << std::endl;
 			std::cout << "\tCode: " << e.code << std::endl;
@@ -61,7 +64,7 @@ void MacroDevice::inspectDevice(unsigned short filterType) {
 	}
 }
 
-void MacroDevice::recordMacro(unsigned short filterType) {
+void MacroDevice::recordMacro(int typeFilter) {
 	std::cout << "[ " << devicePath << " ]" << std::endl;
     milliseconds time = milliseconds(0);
     milliseconds timeDiff = time;

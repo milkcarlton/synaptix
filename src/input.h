@@ -12,7 +12,7 @@
 #include <linux/input.h>
 #include <linux/input-event-codes.h>
 
-// TODO: Undergo abstraction w/ implementations for xorg and wayland
+// TODO: Abstract into implementations for xorg and wayland
 class Input {
     public:
        Input();
