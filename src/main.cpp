@@ -34,9 +34,9 @@ int strToInt(std::string str, int defaultValue) {
 	return result;
 }
 
-void loadConfig() {
+void loadConfig(std::string rootDir = "") {
     DeviceManager dm;
-    Loader loader;
+    Loader loader(rootDir);
 
 	loader.load(dm);
 	while (true) {}
@@ -94,7 +94,7 @@ std::unordered_map<std::string, std::string>* mapInput(int argc, char** argv) {
 
 void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 	if (inputMap->count("-l")) {
-		loadConfig();
+		loadConfig(inputMap->at("-l"));
 	} else if (inputMap->count("-h")) {
 		printHelp();
 	} else if (inputMap->count("-i")) {
@@ -114,6 +114,7 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 int main(int argc, char** argv) {
 	try {
 		auto inputMap = mapInput(argc, argv);
+    	seteuid(0);
 		parseArguments(inputMap);
 		delete inputMap;
 	} catch (std::exception& e) {

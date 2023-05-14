@@ -8,6 +8,7 @@
 
 class Loader {
 	public:
+        Loader(std::string rootDir);
 		Loader();
 		~Loader();
 		

@@ -7,7 +7,17 @@
 #include <vector>
 #include <pwd.h>
 
-Loader::Loader() { }
+Loader::Loader(std::string rootDir) {
+    if (rootDir != "") {
+        this->rootDirectory = rootDir;
+    } else {
+        this->rootDirectory = this->rootDir();
+    }
+}
+
+Loader::Loader() {
+    this->rootDirectory = rootDir();
+}
 Loader::~Loader() { }
 
 std::string Loader::rootDir() {
