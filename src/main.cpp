@@ -47,12 +47,12 @@ void printImproper() {
 }
 
 void printHelp() {
-	std::cout << "/=========[SYNAPTIX HELP]=========\\" << std::endl;
-    std::cout << "-l: Load config [~/.config/synaptix/synaptix.conf]" << std::endl;
-    std::cout << "-i [path]: Inspect input device" << std::endl;
-    std::cout << "\tex: -i /dev/input/event10" << std::endl;
-    std::cout << "-d [path]: Create test device macro" << std::endl;
-    std::cout << "\tex: -d /dev/input/event10" << std::endl;
+	std::cout << "usage: synaptix <operation> [...]" << std::endl;
+	std::cout << "  {-h}\tDisplay this help and exit" << std::endl;
+    std::cout << "  {-l}\t[optional path]: Load and run config" << std::endl;
+    std::cout << "  {-d}\t[path]: Specify device" << std::endl;
+    std::cout << "  \t{-i}\t[optional input filter]: Inspect input device" << std::endl;
+    std::cout << "  \t{-r}\tRecord macro" << std::endl;
 }
 
 void recordMacro(std::string devicePath) {
@@ -113,8 +113,8 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 
 int main(int argc, char** argv) {
 	try {
-		auto inputMap = mapInput(argc, argv);
     	seteuid(0);
+		auto inputMap = mapInput(argc, argv);
 		parseArguments(inputMap);
 		delete inputMap;
 	} catch (std::exception& e) {
