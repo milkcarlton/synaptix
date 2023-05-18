@@ -55,10 +55,10 @@ void printHelp() {
     std::cout << "  \t{-r}\tRecord macro" << std::endl;
 }
 
-void recordMacro(std::string devicePath) {
+void recordMacro(std::string devicePath, int typeFilter) {
 	std::cout << "Recording Macro..." << std::endl;
     MacroDevice mdev = MacroDevice(devicePath);
-	mdev.recordMacro(-1);
+	mdev.recordMacro(typeFilter);
 }
 
 void monitorDevice(std::string devicePath, int typeFilter) {
@@ -102,7 +102,8 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		if (inputMap->count("-d")) monitorDevice(inputMap->at("-d"), typeFilter);
 		else printImproper();
 	} else if (inputMap->count("-r")) {
-		if (inputMap->count("-d")) recordMacro(inputMap->at("-d"));
+		int typeFilter = strToInt(inputMap->at("-r"), -1);
+		if (inputMap->count("-d")) recordMacro(inputMap->at("-d"), typeFilter);
 		else printImproper();
 	} else if (inputMap->count("-t")) {
     // Use for one-time binding / testing

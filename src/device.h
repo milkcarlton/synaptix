@@ -26,6 +26,8 @@ class MacroDevice {
 		
 		void inspectDevice(int typeFilter);
 		void recordMacro(int typeFilter);
+
+		input_event pollUntilReceived(int typeFilter, int keyState);
 		
 		bool isRunning();
 		bool toggleMacros();

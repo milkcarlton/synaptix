@@ -1,6 +1,7 @@
 #include <thread>
 #include <chrono>
 #include <filesystem>
+#include <vector>
 #include "device.h"
 
 using std::chrono::milliseconds;
@@ -64,27 +65,52 @@ void MacroDevice::inspectDevice(int typeFilter) {
 	}
 }
 
+input_event MacroDevice::pollUntilReceived(int typeFilter, int keyState) {
+	input_event result;
+	while (true) {
+		result = readDevice();
+		if (result.type == typeFilter || typeFilter == -1) break;
+	}	
+	return result;
+}
+
 void MacroDevice::recordMacro(int typeFilter) {
-	std::cout << "[ " << devicePath << " ]" << std::endl;
-    milliseconds time = milliseconds(0);
-    milliseconds timeDiff = time;
+	auto result = std::vector<PlaybackBind>();
+	std::cout << "Recording on [ " << devicePath << " ] ..." << std::endl;
+	std::cout << "Enter key to signal the end of the recording..." << std::endl;
+	input_event stopKey = pollUntilReceived(1, 1);
+	pollUntilReceived(1, 0);
+	std::cout << "Recording until key " << stopKey.code << " is pressed!" << std::endl;
+
+	milliseconds timePrev = milliseconds(0);
+	milliseconds timeCur = milliseconds(0);
+
 	while (true) {
 		input_event e = readDevice();
-		if (e.type == EV_KEY || EV_KEY == -1) {
-            milliseconds timeNow = duration_cast<milliseconds>(
-                system_clock::now().time_since_epoch()
-            );
-            if (time != milliseconds(0)) {
-                timeDiff = timeNow - time;
-			    std::cout << timeDiff << std::endl;
-			    std::cout << e.code << "\t" << e.value << "\t";
-            } else {
-                timeDiff = time;
-			    std::cout << e.code << "\t" << e.value << "\t" << timeDiff << std::endl;
-            }
-            timeDiff = timeNow - time;
-            time = timeNow;
+		if (e.code == stopKey.code && e.type == stopKey.type && e.value > 0) break;
+		if (e.type == typeFilter || typeFilter == -1) {
+			milliseconds timeCur = duration_cast<milliseconds>(
+				system_clock::now().time_since_epoch()
+			);
+			
+			if (timePrev == milliseconds(0)) timePrev = timeCur;
+			if (result.size() > 0 && e.value == result.back().state) continue;
+
+			std::string bind = "A";
+			unsigned short state = static_cast<unsigned short>(e.value);
+			unsigned short delay = static_cast<unsigned short>((timeCur - timePrev).count());
+
+			std::cout << e.code << "\tV: " << state << "\tD: " << delay << std::endl;
+			struct PlaybackBind eventBind = { bind, state, delay };
+			
+			result.push_back(eventBind);
+			timePrev = timeCur;	
 		}
+	}
+
+	for (int i = 0; i < result.size(); i++) {
+		PlaybackBind b = result.at(i);
+		std::cout << b.bind << " -> VAL: " << b.state << " DELAY: " << b.delay << std::endl;
 	}
 }
 
