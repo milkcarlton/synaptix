@@ -102,7 +102,7 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		if (inputMap->count("-d")) monitorDevice(inputMap->at("-d"), typeFilter);
 		else printImproper();
 	} else if (inputMap->count("-r")) {
-		int typeFilter = strToInt(inputMap->at("-r"), -1);
+		int typeFilter = strToInt(inputMap->at("-r"), 1);
 		if (inputMap->count("-d")) recordMacro(inputMap->at("-d"), typeFilter);
 		else printImproper();
 	} else if (inputMap->count("-t")) {

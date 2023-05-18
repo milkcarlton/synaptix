@@ -78,8 +78,8 @@ void MacroDevice::recordMacro(int typeFilter) {
 	auto result = std::vector<PlaybackBind>();
 	std::cout << "Recording on [ " << devicePath << " ] ..." << std::endl;
 	std::cout << "Enter key to signal the end of the recording..." << std::endl;
-	input_event stopKey = pollUntilReceived(1, 1);
-	pollUntilReceived(1, 0);
+	input_event stopKey = pollUntilReceived(typeFilter, 1);
+	pollUntilReceived(typeFilter, 0);
 	std::cout << "Recording until key " << stopKey.code << " is pressed!" << std::endl;
 
 	milliseconds timePrev = milliseconds(0);
