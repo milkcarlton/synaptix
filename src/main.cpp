@@ -46,13 +46,30 @@ void printImproper() {
     std::cout << "Improper command usage. Run with -h for help!" << std::endl;
 }
 
-void printHelp() {
-	std::cout << "usage: synaptix <operation> [...]" << std::endl;
-	std::cout << "  {-h}\tDisplay this help and exit" << std::endl;
-    std::cout << "  {-l}\t[optional path]: Load and run config" << std::endl;
-    std::cout << "  {-d}\t[path]: Specify device" << std::endl;
-    std::cout << "  \t{-i}\t[optional input filter]: Inspect input device" << std::endl;
-    std::cout << "  \t{-r}\tRecord macro" << std::endl;
+void printHelp(std::string helpFor) {
+	if (helpFor == "" || helpFor == "h") {
+		std::cout << "usage: synaptix <operation> [...]" << std::endl;
+		std::cout << "operations:" << std::endl;
+		std::cout << "  synaptix {-h}\t[options] - Display this help and exit" << std::endl;
+    	std::cout << "  synaptix {-l}\t[options] - Load and run config file" << std::endl;
+    	std::cout << "  synaptix {-i}\t[options] - Inspect input device" << std::endl;
+    	std::cout << "  synaptix {-r}\t[options] - Record macro" << std::endl;
+		std::cout << std::endl;
+    	std::cout << "run \'synaptix -h\' with an operation for further help" << std::endl;
+    	std::cout << "\tex: \'synaptix -h r\'" << std::endl;
+	} else if (helpFor == "l") {
+		std::cout << "usage: synaptix {-l} (optional config path)" << std::endl;
+		std::cout << "options:" << std::endl;
+	} else if (helpFor == "i") {
+		std::cout << "usage: synaptix {-i} (optional input filter) [options]" << std::endl;
+		std::cout << "options:" << std::endl;
+		std::cout << "  -d <path> (required)\tEvent path of desired input device" << std::endl;
+	} else if (helpFor == "r") {
+		std::cout << "usage: synaptix {-r} (optional input filter) [options]" << std::endl;
+		std::cout << "options:" << std::endl;
+		std::cout << "  -d <path> (required)\tDesired keyboard event device path" << std::endl;
+		std::cout << "  -o <path> (optional)\tOutput path for recorded macro" << std::endl;
+	}
 }
 
 void recordMacro(std::string devicePath, std::string outputPath, int typeFilter) {
@@ -95,7 +112,7 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 	if (inputMap->count("-l")) {
 		loadConfig(inputMap->at("-l"));
 	} else if (inputMap->count("-h")) {
-		printHelp();
+		printHelp(inputMap->at("-h"));
 	} else if (inputMap->count("-i")) {
 		int typeFilter = strToInt(inputMap->at("-i"), -1);
 		if (inputMap->count("-d")) monitorDevice(inputMap->at("-d"), typeFilter);
