@@ -25,7 +25,7 @@ class MacroDevice {
 		void governMacros();
 		
 		void inspectDevice(int typeFilter);
-		void recordMacro(int typeFilter);
+		void recordMacro(int typeFilter, std::string outputPath);
 
 		input_event pollUntilReceived(int typeFilter, int keyState);
 		

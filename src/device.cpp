@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <vector>
 #include "device.h"
+#include "keyboard.h"
 
 using std::chrono::milliseconds;
 using std::chrono::duration_cast;
@@ -37,7 +38,7 @@ input_event MacroDevice::readDevice() {
 
 std::ifstream* MacroDevice::openDeviceStream() {
 	std::ifstream* input_file = new std::ifstream();
-	std::cout << "Opening Device [\'" << devicePath << "\']" << std::endl;
+	std::cout << "# Opening Device [\'" << devicePath << "\']" << std::endl;
 	input_file->open(devicePath, std::ios::binary | std::ios::in);
 	return input_file;
 }
@@ -74,13 +75,21 @@ input_event MacroDevice::pollUntilReceived(int typeFilter, int keyState) {
 	return result;
 }
 
-void MacroDevice::recordMacro(int typeFilter) {
-	auto result = std::vector<PlaybackBind>();
-	std::cout << "Recording on [ " << devicePath << " ] ..." << std::endl;
-	std::cout << "Enter key to signal the end of the recording..." << std::endl;
+struct RecordingBind {
+	unsigned short bind;
+	unsigned short state;
+	unsigned short delay;
+};
+
+void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
+	KeyboardMap kbm;
+	auto result = std::vector<RecordingBind>();
+	std::cout << "# Recording on [ " << devicePath << " ] ..." << std::endl;
+	std::cout << "# Enter key to signal the end of the recording:" << std::endl;
 	input_event stopKey = pollUntilReceived(typeFilter, 1);
 	pollUntilReceived(typeFilter, 0);
-	std::cout << "Recording until key " << stopKey.code << " is pressed!" << std::endl;
+	std::cout << "# Recording until key " 
+			  << kbm.getKey(stopKey.code) << " is pressed." << std::endl;
 
 	milliseconds timePrev = milliseconds(0);
 	milliseconds timeCur = milliseconds(0);
@@ -93,24 +102,41 @@ void MacroDevice::recordMacro(int typeFilter) {
 				system_clock::now().time_since_epoch()
 			);
 			
-			if (timePrev == milliseconds(0)) timePrev = timeCur;
-			if (result.size() > 0 && e.value == result.back().state) continue;
-
-			std::string bind = "A";
-			unsigned short state = static_cast<unsigned short>(e.value);
-			unsigned short delay = static_cast<unsigned short>((timeCur - timePrev).count());
-
-			std::cout << e.code << "\tV: " << state << "\tD: " << delay << std::endl;
-			struct PlaybackBind eventBind = { bind, state, delay };
+			auto bind = e.code;
+			auto delay = static_cast<unsigned short>((timeCur - timePrev).count());
+			bool state = (e.value > 0);
 			
-			result.push_back(eventBind);
-			timePrev = timeCur;	
+			if (timePrev == milliseconds(0)) timePrev = timeCur;
+
+			if (result.size() > 0) {
+				RecordingBind& b = result.back();
+				if (bind == b.bind && state == b.state) 
+					continue;
+				b.delay = delay;
+			}
+
+			result.push_back({ bind, state, 0 });
+			timePrev = timeCur;
 		}
 	}
 
-	for (int i = 0; i < result.size(); i++) {
-		PlaybackBind b = result.at(i);
-		std::cout << b.bind << " -> VAL: " << b.state << " DELAY: " << b.delay << std::endl;
+	std::cout << std::endl;
+	if (outputPath != "") {	
+   		if (std::filesystem::exists(outputPath))
+      		throw std::invalid_argument("File @ [\'" + outputPath + "\'] already exists!");
+		std::ofstream outStream;
+		outStream.open(outputPath, std::ios::out | std::ios::trunc);
+		for (int i = 0; i < result.size(); i++) {
+			RecordingBind b = result.at(i);
+			std::cout << kbm.getKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+			outStream << kbm.getKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+		}
+		outStream.close();	
+	} else {
+		for (int i = 0; i < result.size(); i++) {
+			RecordingBind b = result.at(i);
+			std::cout << kbm.getKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+		}
 	}
 }
 
