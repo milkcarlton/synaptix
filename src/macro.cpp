@@ -1,21 +1,9 @@
-/**
- Read file from ~/.config/synaptix/...
- Of format /dev/input/..., 1 [type from event], 2|1|0 [while held|on press|on release]
- Then the keycodes to execute on that binding...
- {keycode, press for ms}
- {PAUSE, pause for ms}
-
- Move input device mapping to separate class with array of macros
- So the input device is only polled once per macro set
- Also check if the keycode is already bound
-**/
-
 #include <thread>
 #include "macro.h"
 
 Macro::Macro(std::string name, ActivatorBind activator) {
 	this->macroName = name;
-    this->input = Input();
+    this->input = InputXorg();
 	this->responseSequence = std::vector<PlaybackBind>();
     setActivator(activator);
 }
@@ -41,8 +29,9 @@ void Macro::addResponse(std::string bind, unsigned short state, unsigned short d
 }
 
 void Macro::playMacro() {
-    for (PlaybackBind b : this->responseSequence)
-        input.playBind(input.getStrToKeycode(b.bind), b.state, b.delay); 
+    for (PlaybackBind b : this->responseSequence) {
+        input.playBind(input.getStrToKeycode(b.bind), b.state, b.delay);
+    }
 }
 
 void Macro::repeatMacro() {

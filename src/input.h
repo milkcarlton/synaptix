@@ -1,29 +1,28 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef AGNOSTIC_INPUT_H
+#define AGNOSTIC_INPUT_H
 
-#include <X11/extensions/XTest.h>
 #include <string>
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XTest.h>
 #include <linux/input.h>
 #include <linux/input-event-codes.h>
 
-// TODO: Abstract into implementations for xorg and wayland
-class Input {
-    public:
-       Input();
-       ~Input();
-       unsigned int getSymToKeycode(unsigned int keysym);
-       unsigned int getStrToKeycode(std::string keyStr);
-       void playBind(unsigned int keycode, unsigned short state, unsigned short delay = 0);
-       void playBind(unsigned int keycode);
-    private:
-       std::string type;
-       Display* display;
+class AgnosticInput {
+	public:
+		AgnosticInput(std::string path = "/dev/uinput");
+		~AgnosticInput();
+       	
+		unsigned int getSymToKeycode(unsigned int keysym);
+       	unsigned int getStrToKeycode(std::string keyStr);
+		
+		void emitKeycode(unsigned int keycode, unsigned short state);
+		void emitEvent(unsigned short type, unsigned int code, unsigned short value);
+
+		void playBind(unsigned int keycode);
+		void playBind(unsigned int keycode, unsigned short state, unsigned short delay = 0);
+	private:
+		int fildes;
 };
 
 #endif

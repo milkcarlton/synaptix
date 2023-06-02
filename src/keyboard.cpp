@@ -9,6 +9,15 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstdio>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+
+KeyboardMap::KeyboardMap(DiskUtils* disk) {
+    this->disk = disk;
+    this->genKeyMap(disk->rootDir());
+}
 
 KeyboardMap::KeyboardMap() {
     this->file_descriptor = open("/dev/tty0", O_RDWR);
@@ -22,7 +31,53 @@ KeyboardMap::~KeyboardMap() {
     close(file_descriptor);
 }
 
-std::string KeyboardMap::getKey(unsigned short keyCode) {
+void KeyboardMap::readKeyMap(std::string path) {
+    std::ifstream keyConfig(path + "/keymap.conf");
+    
+    if (keyConfig.is_open()) {
+        std::string line;
+        while (std::getline(keyConfig, line)) {
+            if (line.front() == '#') continue;
+            std::string tok;
+            std::istringstream ss(line);
+            std::vector<std::string> tokens;
+            
+            while (ss >> tok) tokens.push_back(tok);
+            if (tokens.size() != 2) {
+                std::cout << "Skipping malformed key configuration line!" << std::endl;
+                std::cout << line << std::endl;
+                continue;
+            }
+            
+            std::string key = tokens[0];
+            for (int i = 0; i < Text.length(); i++)
+                Text[i] = tolower(Text[i]);
+            std::transform(key.begin(), key.end(), key.begin(), std::tolower);
+            
+			keyMap.insert(std::pair<std::string, unsigned int>(
+                key,
+                std::stoul(tokens[1])
+            ));
+        }
+        keyConfig.close();
+    } else {
+        std::cout << "Key config failed to open!" << std::endl;
+    }
+
+}
+
+unsigned int KeyboardMap::getKeyValue(std::string keyStr) {
+    if (keyMap.count(keyStr))
+       return keyMap.at(keyStr); 
+    
+    return 0;
+}
+
+std::string KeyboardMap::getKeyStr(unsigned int keyVal) {
+    return "";
+}
+
+std::string KeyboardMap::getXKey(unsigned short keyCode) {
     struct kbentry entry;
     entry.kb_table = K_NORMTAB;
     entry.kb_index = keyCode;

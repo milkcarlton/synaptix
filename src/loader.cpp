@@ -1,4 +1,5 @@
 #include "loader.h"
+
 #include <sys/capability.h>
 #include <unistd.h>
 #include <iostream>
@@ -7,34 +8,11 @@
 #include <vector>
 #include <pwd.h>
 
-Loader::Loader(std::string rootDir) {
-    if (rootDir != "") {
-        this->rootDirectory = rootDir;
-    } else {
-        this->rootDirectory = this->rootDir();
-    }
+Loader::Loader(DiskUtils* disk) {
+    this->disk = disk;
 }
 
-Loader::Loader() {
-    this->rootDirectory = rootDir();
-}
 Loader::~Loader() { }
-
-std::string Loader::rootDir() {
-    if (rootDirectory == "") {
-        std::string result;
-        try {
-	        result = static_cast<std::string>(getenv("XDG_CONFIG_HOME"));
-        } catch (std::logic_error e) {
-            struct passwd* pw = getpwuid(geteuid());
-            if (pw != nullptr) result = static_cast<std::string>(pw->pw_dir) + "/.config";
-            else result = "";
-        }
-        result += "/synaptix";
-        rootDirectory = result; 
-    }
-    return rootDirectory;
-}
 
 unsigned short safeStrToNum(std::string numStr) {
     try {
@@ -45,7 +23,7 @@ unsigned short safeStrToNum(std::string numStr) {
     }
 }
 
-Macro Loader::loadMacro(std::string path) {
+Macro Loader::loadMacro(std::string path, KeyboardMap& keyMap) {
 	std::ifstream macroFile(path);
     Macro result(path.substr(path.find_last_of("/") + 1, path.find_last_of(".")));
     if (macroFile.is_open()) {
@@ -63,6 +41,9 @@ Macro Loader::loadMacro(std::string path) {
                 continue;
             }
 
+            unsigned int uapiInputEventKeyCode = keyMap.getKeyValue(tokens[0]);
+            std::cout << "STR: " << tokens[0] << ", UIEK: " << uapiInputEventKeyCode << std::endl;
+
             result.addResponse(
                 tokens[0], 
                 safeStrToNum(tokens[1]), 
@@ -74,9 +55,9 @@ Macro Loader::loadMacro(std::string path) {
     return result;
 }
 
-void Loader::load(DeviceManager& manager) {
-    std::string macrosPath = rootDir() + "/macros";
-    std::string configPath = rootDir() + "/synaptix.conf";
+void Loader::load(DeviceManager& manager, KeyboardMap& keyMap) {
+    std::string macrosPath = disk->rootDir() + "/macros";
+    std::string configPath = disk->rootDir() + "/synaptix.conf";
 	std::ifstream configFile(configPath);
     seteuid(0);
 
@@ -95,7 +76,7 @@ void Loader::load(DeviceManager& manager) {
                 continue;
             }
 
-            Macro macro = loadMacro(macrosPath + "/" + tokens[0]);
+            Macro macro = loadMacro(macrosPath + "/" + tokens[0], keyMap);
             macro.setActivator({
                 safeStrToNum(tokens[2]), 
                 safeStrToNum(tokens[3]), 

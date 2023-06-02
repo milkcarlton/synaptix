@@ -4,17 +4,26 @@
 #include <string>
 #include <unordered_map>
 
+#include "disk.h"
+
 class KeyboardMap {
     public:
+        KeyboardMap(DiskUtils* disk);
         KeyboardMap();
         ~KeyboardMap();
 
-        std::string getKey(unsigned short keyCode); 
-        bool hasKeyVal(unsigned short keyCode);
-        void assignKey(unsigned short keyCode, char character);
+        unsigned int getKeyValue(std::string keyStr);
+        std::string getKeyStr(unsigned int keyVal);
+
+        void readKeyMap(std::string path);
+        void genKeyMapFromSrcDefs(std::string path);
+
+        std::string getXKey(unsigned short keyCode); 
     private:
-        std::unordered_map<unsigned short, char> keyMap;
+        DiskUtils* disk;
         int file_descriptor;
+
+        std::unordered_map<std::string, unsigned int> keyMap;
 };
 
 #endif

@@ -1,4 +1,3 @@
-#include <thread>
 #include <chrono>
 #include <filesystem>
 #include <vector>
@@ -18,6 +17,11 @@ MacroDevice::MacroDevice(std::string path) {
 }
 
 MacroDevice::~MacroDevice() {
+    this->toggleMacros(false);
+    
+    governorThread->join();
+    delete governorThread;
+
 	deviceStream->close();
 	delete deviceStream;
 }
@@ -31,8 +35,12 @@ void MacroDevice::unregisterMacro(Macro macro) {
 }
 
 input_event MacroDevice::readDevice() {
+	return readDevice(this->deviceStream);
+}
+
+input_event MacroDevice::readDevice(std::ifstream* stream) {
 	input_event event;
-	deviceStream->read(reinterpret_cast<char*>(&event), sizeof(event));
+	stream->read(reinterpret_cast<char*>(&event), sizeof(event));
 	return event;
 }
 
@@ -89,9 +97,9 @@ void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
 	std::cout << "# Recording on [ " << devicePath << " ] ..." << std::endl;
 	std::cout << "# Enter key to signal the end of the recording:" << std::endl;
 	input_event stopKey = pollUntilReceived(typeFilter, 1);
-	std::cout << "# GOT: " << kbm.getKey(stopKey.code) << std::endl;
+	std::cout << "# GOT: " << kbm.getXKey(stopKey.code) << std::endl;
 	pollUntilReceived(typeFilter, 0);
-	std::cout << "# Recording until \'" << kbm.getKey(stopKey.code) 
+	std::cout << "# Recording until \'" << kbm.getXKey(stopKey.code) << "(" << stopKey.code << ")"
 			  << "\' key is pressed." << std::endl;
 
 	milliseconds timePrev = milliseconds(0);
@@ -137,9 +145,9 @@ void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
 
 	for (int i = 0; i < result.size(); i++) {
 		RecordingBind b = result.at(i);
-		std::cout << kbm.getKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+		std::cout << kbm.getXKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
 		if (outToFile)
-			outStream << kbm.getKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+			outStream << kbm.getXKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
 	}
 
 	if (outToFile) outStream.close();
@@ -147,10 +155,9 @@ void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
 
 void MacroDevice::startMacros() {
 	toggleMacros(true);
-    std::thread governorThread([this]() {
+    this->governorThread = new std::thread([this]() {
         governMacros();
     });
-    governorThread.detach();
 }
 
 bool MacroDevice::toggleMacros() {

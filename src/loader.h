@@ -3,20 +3,21 @@
 
 #include <cstdio>
 #include <string>
+
+#include "disk.h"
 #include "device.h"
+#include "keyboard.h"
 #include "device_manager.h"
 
 class Loader {
 	public:
-        Loader(std::string rootDir);
-		Loader();
+        Loader(DiskUtils* disk);
 		~Loader();
 		
-		std::string rootDir();
-		Macro loadMacro(std::string path);
-		void load(DeviceManager& manager);
+		Macro loadMacro(std::string path, KeyboardMap& keyMap);
+		void load(DeviceManager& manager, KeyboardMap& keyMap);
 	private:
-		std::string rootDirectory = "";
+		DiskUtils* disk;
 };
 
 #endif

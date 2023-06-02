@@ -5,7 +5,8 @@
 #include <vector>
 #include <iostream>
 
-#include "input.h"
+#include "keyboard.h"
+#include "xorg/input_xorg.h"
 
 enum ActivatorType { RELEASE, PRESS, HELD, NONE };
 
@@ -33,10 +34,10 @@ class Macro {
     private:
         void repeatMacro();
         void playMacro();
-        std::string macroName; // file name of macro in config folder
+        std::string macroName;
         ActivatorBind activatorBinding;
         std::vector<PlaybackBind> responseSequence;
-        Input input;
+        InputXorg input;
         bool doRepeat = false;
 };
 

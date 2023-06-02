@@ -7,14 +7,20 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
 #include <fstream>
+#include <signal.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/capability.h>
 
+#include "disk.h"
 #include "macro.h"
 #include "device.h"
 #include "loader.h"
+#include "input.h"
+#include "keyboard.h"
 #include "device_manager.h"
 
 using std::string, std::cout, std::endl;
@@ -34,12 +40,20 @@ int strToInt(std::string str, int defaultValue) {
 	return result;
 }
 
-void loadConfig(std::string rootDir = "") {
-    DeviceManager dm;
-    Loader loader(rootDir);
+void signalHandler(int val) {
+    signal(SIGINT, signalHandler);
+	exit(0);
+}
 
-	loader.load(dm);
-	while (true) {}
+void loadConfig(DiskUtils* disk, KeyboardMap& keyMap) {
+    DeviceManager dm;
+    Loader loader(disk);
+	loader.load(dm, keyMap);
+
+    signal(SIGINT, signalHandler);
+
+	while (dm.hasDevices())
+		std::this_thread::sleep_for (std::chrono::seconds(1));
 }
 
 void printImproper() {
@@ -83,6 +97,13 @@ void monitorDevice(std::string devicePath, int typeFilter) {
     mdev.inspectDevice(typeFilter);
 }
 
+void findDevice(const std::string& rootDir, int typeFilter) {
+    DeviceManager dm;
+	//dm.attachDevice("/dev/input/event3", false);
+	std::string devicePath = dm.findNextDevice(rootDir, typeFilter);
+	std::cout << devicePath << std::endl;
+}
+
 std::unordered_map<std::string, std::string>* mapInput(int argc, char** argv) {
 	auto result = new std::unordered_map<std::string, std::string>();
     for (int i = 1; i < argc; i++) {
@@ -109,8 +130,18 @@ std::unordered_map<std::string, std::string>* mapInput(int argc, char** argv) {
 }
 
 void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
+	DiskUtils* configRoot;
+	
+	if (inputMap->count("-c")) {
+		configRoot = new DiskUtils(inputMap->at("-c"));
+	} else {
+		configRoot = new DiskUtils();
+	}
+
+	KeyboardMap keyMap(configRoot);
+
 	if (inputMap->count("-l")) {
-		loadConfig(inputMap->at("-l"));
+		loadConfig(configRoot, keyMap);
 	} else if (inputMap->count("-h")) {
 		printHelp(inputMap->at("-h"));
 	} else if (inputMap->count("-i")) {
@@ -122,11 +153,22 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		std::string outputPath = (inputMap->count("-o")) ? inputMap->at("-o") : "";
 		if (inputMap->count("-d")) recordMacro(inputMap->at("-d"), outputPath, typeFilter);
 		else printImproper();
-	} else if (inputMap->count("-t")) {
-    	// Use for one-time binding / testing
+	} else if (inputMap->count("-f")) {
+		std::string rootDir = "/dev/input/";
+		if (inputMap->count("-d")) rootDir = inputMap->at("-d");
+		int typeFilter = strToInt(inputMap->at("-f"), 1);
+		findDevice(rootDir, typeFilter);	
+	} else if (inputMap->count("-t")) {	
+		AgnosticInput in(inputMap->at("-t"));
+		in.emitKeycode(0, 1);
+		in.emitKeycode(0, 0);
+	} else if (inputMap->count("-b")) {
+    	// Use for temporary bind testing
 	} else {
 		printImproper();
 	}
+
+	delete configRoot;
 }
 
 int main(int argc, char** argv) {
