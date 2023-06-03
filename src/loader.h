@@ -5,6 +5,7 @@
 #include <string>
 
 #include "disk.h"
+#include "input.h"
 #include "device.h"
 #include "keyboard.h"
 #include "device_manager.h"
@@ -16,8 +17,10 @@ class Loader {
 		
 		Macro loadMacro(std::string path, KeyboardMap& keyMap);
 		void load(DeviceManager& manager, KeyboardMap& keyMap);
+
 	private:
 		DiskUtils* disk;
+        Input* input;
 };
 
 #endif

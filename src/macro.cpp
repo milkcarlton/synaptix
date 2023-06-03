@@ -1,14 +1,14 @@
 #include <thread>
 #include "macro.h"
 
-Macro::Macro(std::string name, ActivatorBind activator) {
+Macro::Macro(std::string name, Input* input, ActivatorBind activator) {
 	this->macroName = name;
-    this->input = InputXorg();
+    this->input = input;
 	this->responseSequence = std::vector<PlaybackBind>();
     setActivator(activator);
 }
 
-Macro::Macro(std::string name) : Macro(name, { 0, 0, NONE }) { }
+Macro::Macro(std::string name, Input* input) : Macro(name, input, { 0, 0, NONE }) { }
 
 Macro::~Macro() {
 	
@@ -23,14 +23,14 @@ bool Macro::isActivator(unsigned short type, unsigned short keycode, ActivatorTy
 		   (activatorBinding.responseType == value || activatorBinding.responseType == HELD));
 }
 
-void Macro::addResponse(std::string bind, unsigned short state, unsigned short delay) {
+void Macro::addResponse(unsigned int bind, unsigned short state, unsigned short delay) {
     struct PlaybackBind b = { bind, state, delay };
     this->responseSequence.push_back(PlaybackBind(b));
 }
 
 void Macro::playMacro() {
     for (PlaybackBind b : this->responseSequence) {
-        input.playBind(input.getStrToKeycode(b.bind), b.state, b.delay);
+        input->playBind(b.bind, b.state, b.delay);
     }
 }
 

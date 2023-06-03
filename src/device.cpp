@@ -17,10 +17,11 @@ MacroDevice::MacroDevice(std::string path) {
 }
 
 MacroDevice::~MacroDevice() {
-    this->toggleMacros(false);
-    
-    governorThread->join();
-    delete governorThread;
+    if (running) {
+        this->toggleMacros(false);
+        governorThread->join();
+        delete governorThread;
+    } 
 
 	deviceStream->close();
 	delete deviceStream;
@@ -31,7 +32,7 @@ void MacroDevice::registerMacro(Macro macro) {
 }
 
 void MacroDevice::unregisterMacro(Macro macro) {
-
+    std::cout << "TODO: Implement unregistering macro from device" << std::endl;
 }
 
 input_event MacroDevice::readDevice() {
@@ -85,22 +86,16 @@ input_event MacroDevice::pollUntilReceived(int typeFilter, int keyState) {
 	return result;
 }
 
-struct RecordingBind {
-	unsigned short bind;
-	unsigned short state;
-	unsigned short delay;
-};
-
-void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
-	KeyboardMap kbm;
-	auto result = std::vector<RecordingBind>();
+void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outputPath) {
+	auto result = std::vector<PlaybackBind>();
 	std::cout << "# Recording on [ " << devicePath << " ] ..." << std::endl;
 	std::cout << "# Enter key to signal the end of the recording:" << std::endl;
 	input_event stopKey = pollUntilReceived(typeFilter, 1);
-	std::cout << "# GOT: " << kbm.getXKey(stopKey.code) << std::endl;
+    std::string stopKeyAlias = kbm.getKeyAlias(stopKey.code);
+
 	pollUntilReceived(typeFilter, 0);
-	std::cout << "# Recording until \'" << kbm.getXKey(stopKey.code) << "(" << stopKey.code << ")"
-			  << "\' key is pressed." << std::endl;
+	std::cout << "# Recording input until the \'" << stopKeyAlias << "\' (" << stopKey.code << ")"
+			  << " key is pressed." << std::endl;
 
 	milliseconds timePrev = milliseconds(0);
 	milliseconds timeCur = milliseconds(0);
@@ -122,7 +117,7 @@ void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
 			if (timePrev == milliseconds(0)) timePrev = timeCur;
 
 			if (result.size() > 0) {
-				RecordingBind& b = result.back();
+				PlaybackBind& b = result.back();
 				if (bind == b.bind && state == b.state) 
 					continue;
 				b.delay = delay;
@@ -134,6 +129,7 @@ void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
 	}
 
 	std::cout << std::endl;
+
 	bool outToFile = (outputPath != "");
 	std::ofstream outStream;
 	
@@ -144,10 +140,13 @@ void MacroDevice::recordMacro(int typeFilter, std::string outputPath) {
 	}
 
 	for (int i = 0; i < result.size(); i++) {
-		RecordingBind b = result.at(i);
-		std::cout << kbm.getXKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+		PlaybackBind& b = result.at(i);
+        std::string keyAlias = kbm.getKeyAlias(b.bind);
+        if (keyAlias == "Not Found") continue;
+
+		std::cout << keyAlias << "\t" << b.state << "\t" << b.delay << std::endl;
 		if (outToFile)
-			outStream << kbm.getXKey(b.bind) << "\t" << b.state << "\t" << b.delay << std::endl;
+			outStream << keyAlias << "\t" << b.state << "\t" << b.delay << std::endl;
 	}
 
 	if (outToFile) outStream.close();

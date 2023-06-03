@@ -86,9 +86,9 @@ void printHelp(std::string helpFor) {
 	}
 }
 
-void recordMacro(std::string devicePath, std::string outputPath, int typeFilter) {
+void recordMacro(std::string devicePath, std::string outputPath, int typeFilter, KeyboardMap& kb) {
     MacroDevice mdev = MacroDevice(devicePath);
-	mdev.recordMacro(typeFilter, outputPath);
+	mdev.recordMacro(kb, typeFilter, outputPath);
 }
 
 void monitorDevice(std::string devicePath, int typeFilter) {
@@ -97,6 +97,7 @@ void monitorDevice(std::string devicePath, int typeFilter) {
     mdev.inspectDevice(typeFilter);
 }
 
+// TODO: Implement functionality
 void findDevice(const std::string& rootDir, int typeFilter) {
     DeviceManager dm;
 	//dm.attachDevice("/dev/input/event3", false);
@@ -151,19 +152,19 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 	} else if (inputMap->count("-r")) {
 		int typeFilter = strToInt(inputMap->at("-r"), 1);
 		std::string outputPath = (inputMap->count("-o")) ? inputMap->at("-o") : "";
-		if (inputMap->count("-d")) recordMacro(inputMap->at("-d"), outputPath, typeFilter);
+		if (inputMap->count("-d")) recordMacro(inputMap->at("-d"), outputPath, typeFilter, keyMap);
 		else printImproper();
 	} else if (inputMap->count("-f")) {
 		std::string rootDir = "/dev/input/";
 		if (inputMap->count("-d")) rootDir = inputMap->at("-d");
 		int typeFilter = strToInt(inputMap->at("-f"), 1);
 		findDevice(rootDir, typeFilter);	
-	} else if (inputMap->count("-t")) {	
-		AgnosticInput in(inputMap->at("-t"));
-		in.emitKeycode(0, 1);
-		in.emitKeycode(0, 0);
+	} else if (inputMap->count("-g")) {
+		keyMap.genKeyMapFromSrcDefs();
+	} else if (inputMap->count("-t")) {
+		printImproper();
 	} else if (inputMap->count("-b")) {
-    	// Use for temporary bind testing
+		std::cout << "TODO: Implement one-time bind testing" << std::endl;
 	} else {
 		printImproper();
 	}

@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "keyboard.h"
-#include "xorg/input_xorg.h"
+#include "input.h"
 
 enum ActivatorType { RELEASE, PRESS, HELD, NONE };
 
@@ -17,27 +17,28 @@ struct ActivatorBind {
 };
 
 struct PlaybackBind {
-	std::string bind;
+	unsigned int bind;
 	unsigned short state;
 	unsigned short delay;
 };
 
 class Macro {
     public:
-        Macro(std::string name, ActivatorBind activator);
-        Macro(std::string name);
+        Macro(std::string name, Input* input, ActivatorBind activator);
+        Macro(std::string name, Input* input);
         ~Macro();
         void playMacro(ActivatorType value);
         bool isActivator(unsigned short type, unsigned short keycode, ActivatorType value);
-        void addResponse(std::string bind, unsigned short state, unsigned short delay);
+        void addResponse(unsigned int bind, unsigned short state, unsigned short delay);
         void setActivator(ActivatorBind activator);
+
     private:
         void repeatMacro();
         void playMacro();
         std::string macroName;
         ActivatorBind activatorBinding;
         std::vector<PlaybackBind> responseSequence;
-        InputXorg input;
+        Input* input;
         bool doRepeat = false;
 };
 

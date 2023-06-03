@@ -10,9 +10,12 @@
 
 Loader::Loader(DiskUtils* disk) {
     this->disk = disk;
+    this->input = new Input();
 }
 
-Loader::~Loader() { }
+Loader::~Loader() {
+    delete this->input;
+}
 
 unsigned short safeStrToNum(std::string numStr) {
     try {
@@ -25,7 +28,7 @@ unsigned short safeStrToNum(std::string numStr) {
 
 Macro Loader::loadMacro(std::string path, KeyboardMap& keyMap) {
 	std::ifstream macroFile(path);
-    Macro result(path.substr(path.find_last_of("/") + 1, path.find_last_of(".")));
+    Macro result(path.substr(path.find_last_of("/") + 1, path.find_last_of(".")), input);
     if (macroFile.is_open()) {
         std::string line;
         while (std::getline(macroFile, line)) {
@@ -40,12 +43,9 @@ Macro Loader::loadMacro(std::string path, KeyboardMap& keyMap) {
                 std::cout << line << std::endl;
                 continue;
             }
-
-            unsigned int uapiInputEventKeyCode = keyMap.getKeyValue(tokens[0]);
-            std::cout << "STR: " << tokens[0] << ", UIEK: " << uapiInputEventKeyCode << std::endl;
-
+            
             result.addResponse(
-                tokens[0], 
+                keyMap.getKeyValue(tokens[0]), 
                 safeStrToNum(tokens[1]), 
                 safeStrToNum(tokens[2]) 
             );

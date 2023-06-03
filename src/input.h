@@ -8,10 +8,10 @@
 #include <linux/input.h>
 #include <linux/input-event-codes.h>
 
-class AgnosticInput {
+class Input {
 	public:
-		AgnosticInput(std::string path = "/dev/uinput");
-		~AgnosticInput();
+		Input(std::string path = "/dev/uinput");
+		~Input();
        	
 		unsigned int getSymToKeycode(unsigned int keysym);
        	unsigned int getStrToKeycode(std::string keyStr);
@@ -21,6 +21,7 @@ class AgnosticInput {
 
 		void playBind(unsigned int keycode);
 		void playBind(unsigned int keycode, unsigned short state, unsigned short delay = 0);
+
 	private:
 		int fildes;
 };

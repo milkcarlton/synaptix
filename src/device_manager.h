@@ -20,6 +20,7 @@ class DeviceManager {
         void showDevices();
     
         std::string findNextDevice(const std::string& devicePath, unsigned short typeFilter);
+
     private:
         std::vector<MacroDevice*> devices;
 };

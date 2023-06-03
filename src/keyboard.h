@@ -11,19 +11,19 @@ class KeyboardMap {
         KeyboardMap(DiskUtils* disk);
         KeyboardMap();
         ~KeyboardMap();
-
+        
         unsigned int getKeyValue(std::string keyStr);
-        std::string getKeyStr(unsigned int keyVal);
+        std::string getKeyAlias(unsigned int keyVal);
 
-        void readKeyMap(std::string path);
-        void genKeyMapFromSrcDefs(std::string path);
+        bool sourceKeyMap(std::string path);
+        void genKeyMapFromSrcDefs(std::string path = "/usr/include/linux/input-event-codes.h");
 
-        std::string getXKey(unsigned short keyCode); 
     private:
         DiskUtils* disk;
         int file_descriptor;
-
         std::unordered_map<std::string, unsigned int> keyMap;
+
+        void insertKey(std::string keyAlias, unsigned int keyVal);
 };
 
 #endif

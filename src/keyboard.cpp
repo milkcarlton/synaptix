@@ -12,11 +12,13 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <filesystem>
 #include <algorithm>
 
 KeyboardMap::KeyboardMap(DiskUtils* disk) {
     this->disk = disk;
-    this->genKeyMap(disk->rootDir());
+    if (!this->sourceKeyMap(disk->rootDir()))
+        this->genKeyMapFromSrcDefs();
 }
 
 KeyboardMap::KeyboardMap() {
@@ -31,7 +33,66 @@ KeyboardMap::~KeyboardMap() {
     close(file_descriptor);
 }
 
-void KeyboardMap::readKeyMap(std::string path) {
+unsigned int KeyboardMap::getKeyValue(std::string keyStr) {
+    if (keyMap.count(keyStr))
+       return keyMap.at(keyStr); 
+    
+    return 0;
+}
+
+std::string KeyboardMap::getKeyAlias(unsigned int keyVal) {
+    for (auto key : keyMap) {
+        if (key.second == keyVal)
+            return key.first;
+    }
+    
+    return "Not Found";
+}
+
+void KeyboardMap::insertKey(std::string keyAlias, unsigned int keyVal) {
+    for (int i = 0; i < keyAlias.length(); i++)
+        keyAlias[i] = tolower(keyAlias[i]);
+
+	keyMap.insert(std::pair<std::string, unsigned int>(keyAlias, keyVal));
+}
+
+void KeyboardMap::genKeyMapFromSrcDefs(std::string path) {
+    std::ifstream defStream(path);
+
+    if (defStream.is_open()) {
+        std::string line;
+    
+        while (std::getline(defStream, line)) {
+            if (!line.starts_with("#define KEY_")) continue;
+            line = line.substr(line.find('_') + 1);
+    
+            std::string tok;
+            std::istringstream ss(line);
+            std::vector<std::string> tokens;
+    
+            while (ss >> tok) tokens.push_back(tok);
+            if (tokens.size() < 2) continue;
+            
+            std::string keyAlias = tokens[0];
+            unsigned int keyVal = 0;
+
+            try {
+                if (tokens[1].starts_with("0x"))
+                    keyVal = std::stoul(tokens[1], 0, 16);
+                else
+                    keyVal = std::stoul(tokens[1]);
+            } catch(std::exception &err) {
+                continue;
+            }
+            this->insertKey(keyAlias, keyVal);
+        }
+        defStream.close();
+    } else {
+        std::cout << "Failed to generate key map!" << std::endl;
+    }
+}
+
+bool KeyboardMap::sourceKeyMap(std::string path) {
     std::ifstream keyConfig(path + "/keymap.conf");
     
     if (keyConfig.is_open()) {
@@ -50,9 +111,8 @@ void KeyboardMap::readKeyMap(std::string path) {
             }
             
             std::string key = tokens[0];
-            for (int i = 0; i < Text.length(); i++)
-                Text[i] = tolower(Text[i]);
-            std::transform(key.begin(), key.end(), key.begin(), std::tolower);
+            for (int i = 0; i < key.length(); i++)
+                key[i] = tolower(key[i]);
             
 			keyMap.insert(std::pair<std::string, unsigned int>(
                 key,
@@ -62,67 +122,8 @@ void KeyboardMap::readKeyMap(std::string path) {
         keyConfig.close();
     } else {
         std::cout << "Key config failed to open!" << std::endl;
+        return false;
     }
-
+    return true;
 }
 
-unsigned int KeyboardMap::getKeyValue(std::string keyStr) {
-    if (keyMap.count(keyStr))
-       return keyMap.at(keyStr); 
-    
-    return 0;
-}
-
-std::string KeyboardMap::getKeyStr(unsigned int keyVal) {
-    return "";
-}
-
-std::string KeyboardMap::getXKey(unsigned short keyCode) {
-    struct kbentry entry;
-    entry.kb_table = K_NORMTAB;
-    entry.kb_index = keyCode;
-    
-    if (ioctl(file_descriptor, KDGKBENT, &entry)) {
-	    perror("ioctl KDGKBENT failed");
-        throw std::invalid_argument("Invalid device for keyboard mapping!");
-    }
-
-    if (entry.kb_value == K_SHIFT)
-        return "Shift_L";
-    else if (entry.kb_value == K_ENTER)
-        return "Return";
-    else if (entry.kb_value == K_CTRL)
-        return "Control_L";
-    else if (entry.kb_value == K_CAPS)
-        return "Caps_Lock";
-    else if (entry.kb_value == K_ALT)
-        return "Alt_L";
-    else if (entry.kb_value == K_F1)
-        return "F1";
-    else if (entry.kb_value == K_F2)
-        return "F2";
-    else if (entry.kb_value == K_F3)
-        return "F3";
-    else if (entry.kb_value == K_F4)
-        return "F4";
-    else if (entry.kb_value == K_F5)
-        return "F5";
-    else if (entry.kb_value == K_F6)
-        return "F6";
-    else if (entry.kb_value == K_F7)
-        return "F7";
-    else if (entry.kb_value == K_F8)
-        return "F8";
-    else if (entry.kb_value == K_F9)
-        return "F9";
-    else if (entry.kb_value == K_F10)
-        return "F10";
-    else if (entry.kb_value == K_F11)
-        return "F11";
-    else if (entry.kb_value == K_F12)
-        return "F12";
-    else
-        return std::string(1, static_cast<char>(entry.kb_value & 0xFF));
-
-    return "";
-}

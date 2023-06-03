@@ -8,7 +8,7 @@
 
 #include "input.h"
 
-AgnosticInput::AgnosticInput(std::string path) {
+Input::Input(std::string path) {
 	this->fildes = open(path.c_str(), O_WRONLY | O_NONBLOCK);
 	if (this->fildes == -1) {
         throw std::invalid_argument(
@@ -17,7 +17,10 @@ AgnosticInput::AgnosticInput(std::string path) {
 	}
 
 	ioctl(fildes, UI_SET_EVBIT, EV_KEY);
-	ioctl(fildes, UI_SET_KEYBIT, KEY_SPACE);
+
+    for (int i = 0; i < KEY_CNT; i++) {
+        ioctl(fildes, UI_SET_KEYBIT, i);
+    }
 
 	struct uinput_setup setup;
 
@@ -33,18 +36,18 @@ AgnosticInput::AgnosticInput(std::string path) {
 	sleep(1);
 }
 
-AgnosticInput::~AgnosticInput() {
+Input::~Input() {
 	sleep(1);
 	ioctl(this->fildes, UI_DEV_DESTROY);
 	close(this->fildes);
 }
 
-void AgnosticInput::emitKeycode(unsigned int keycode, unsigned short state) {
-    emitEvent(EV_KEY, KEY_SPACE, state);
+void Input::emitKeycode(unsigned int keycode, unsigned short state) {
+    emitEvent(EV_KEY, keycode, state);
 	emitEvent(EV_SYN, SYN_REPORT, 0); 
 }
 
-void AgnosticInput::emitEvent(unsigned short type, unsigned int code, unsigned short value) {
+void Input::emitEvent(unsigned short type, unsigned int code, unsigned short value) {
 	struct input_event e;
 	e.type = type;	
 	e.code = code;
@@ -55,17 +58,17 @@ void AgnosticInput::emitEvent(unsigned short type, unsigned int code, unsigned s
 	write(this->fildes, &e, sizeof(e));
 }
 
-void AgnosticInput::playBind(unsigned int keycode) {
+void Input::playBind(unsigned int keycode) {
     playBind(keycode, 0, 0);
 }
 
-void AgnosticInput::playBind(unsigned int keycode, unsigned short state, unsigned short delay) {
+void Input::playBind(unsigned int keycode, unsigned short state, unsigned short delay) {
 	if (state == 2) {
-		emitEvent(EV_KEY, keycode, true);	
-		emitEvent(EV_KEY, keycode, false);	
+		emitKeycode(keycode, true);	
+		emitKeycode(keycode, false);	
 	} else {
 		if (state > 0) state = 1;
-		emitEvent(EV_KEY, keycode, state);	
+		emitKeycode(keycode, state);	
 	}
     if (delay > 0) std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 }

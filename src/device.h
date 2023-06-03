@@ -27,7 +27,7 @@ class MacroDevice {
 		void governMacros();
 		
 		void inspectDevice(int typeFilter);
-		void recordMacro(int typeFilter, std::string outputPath);
+		void recordMacro(KeyboardMap& kbm, int typeFilter, std::string outputPath);
 
 		bool hasMatchingEvent(int typeFilter, int keyState);
 		input_event pollUntilReceived(int typeFilter, int keyState);
@@ -40,6 +40,7 @@ class MacroDevice {
 		bool operator==(const MacroDevice& other) {
     		return this->devicePath == other.devicePath;
 		}
+
 	private:
 		bool running = false;
 		std::string devicePath;
