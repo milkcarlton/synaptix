@@ -160,7 +160,7 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		int typeFilter = strToInt(inputMap->at("-f"), 1);
 		findDevice(rootDir, typeFilter);	
 	} else if (inputMap->count("-g")) {
-		keyMap.genKeyMapFromSrcDefs();
+		keyMap.genKeyMapFromSrcDefs(true);
 	} else if (inputMap->count("-t")) {
 		printImproper();
 	} else if (inputMap->count("-b")) {

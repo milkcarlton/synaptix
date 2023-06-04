@@ -16,7 +16,7 @@ class KeyboardMap {
         std::string getKeyAlias(unsigned int keyVal);
 
         bool sourceKeyMap(std::string path);
-        void genKeyMapFromSrcDefs(std::string path = "/usr/include/linux/input-event-codes.h");
+        void genKeyMapFromSrcDefs(bool show = false, std::string path = "/usr/include/linux/input-event-codes.h");
 
     private:
         DiskUtils* disk;

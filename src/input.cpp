@@ -22,6 +22,10 @@ Input::Input(std::string path) {
         ioctl(fildes, UI_SET_KEYBIT, i);
     }
 
+    for (int i = BTN_MISC; i <= BTN_GEAR_UP; i++) {
+        ioctl(fildes, UI_SET_KEYBIT, i);
+    }
+
 	struct uinput_setup setup;
 
 	memset(&setup, 0, sizeof(setup));
