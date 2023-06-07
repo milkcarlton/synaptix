@@ -50,8 +50,7 @@ std::string KeyboardMap::getKeyAlias(unsigned int keyVal) {
 }
 
 void KeyboardMap::insertKey(std::string keyAlias, unsigned int keyVal) {
-    for (int i = 0; i < keyAlias.length(); i++)
-        keyAlias[i] = tolower(keyAlias[i]);
+    for (size_t i = 0; i < keyAlias.length(); i++) keyAlias[i] = tolower(keyAlias[i]);
 
 	keyMap.insert(std::pair<std::string, unsigned int>(keyAlias, keyVal));
 }
@@ -122,7 +121,7 @@ bool KeyboardMap::sourceKeyMap(std::string path) {
             }
             
             std::string key = tokens[0];
-            for (int i = 0; i < key.length(); i++)
+            for (size_t i = 0; i < key.length(); i++)
                 key[i] = tolower(key[i]);
             
 			keyMap.insert(std::pair<std::string, unsigned int>(

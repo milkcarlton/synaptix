@@ -23,7 +23,7 @@ std::string DiskUtils::rootDir() {
         std::string result;
         try {
 	        result = static_cast<std::string>(getenv("XDG_CONFIG_HOME"));
-        } catch (std::logic_error e) {
+        } catch (std::logic_error& e) {
             struct passwd* pw = getpwuid(geteuid());
             if (pw != nullptr) result = static_cast<std::string>(pw->pw_dir) + "/.config";
             else result = "";

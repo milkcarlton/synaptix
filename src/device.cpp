@@ -31,10 +31,6 @@ void MacroDevice::registerMacro(Macro macro) {
     macros.push_back(macro);
 }
 
-void MacroDevice::unregisterMacro(Macro macro) {
-    std::cout << "TODO: Implement unregistering macro from device" << std::endl;
-}
-
 input_event MacroDevice::readDevice() {
 	return readDevice(this->deviceStream);
 }
@@ -102,9 +98,14 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 
 	while (true) {
 		input_event e = readDevice();
-		if (e.code == stopKey.code && e.type == stopKey.type)
-			if (result.size() > 0 && e.value > 0) break;
-			else continue;
+
+		if (e.code == stopKey.code && e.type == stopKey.type) {
+			if (result.size() > 0 && e.value > 0)
+                break;
+			else 
+                continue;
+        }
+
 		if (e.type == typeFilter || typeFilter == -1) {
 			milliseconds timeCur = duration_cast<milliseconds>(
 				system_clock::now().time_since_epoch()
@@ -139,7 +140,7 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 		outStream.open(outputPath, std::ios::out | std::ios::trunc);
 	}
 
-	for (int i = 0; i < result.size(); i++) {
+	for (size_t i = 0; i < result.size(); i++) {
 		PlaybackBind& b = result.at(i);
         std::string keyAlias = kbm.getKeyAlias(b.bind);
         if (keyAlias == "Not Found") continue;

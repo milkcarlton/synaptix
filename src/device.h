@@ -22,7 +22,6 @@ class MacroDevice {
 		input_event readDevice(std::ifstream* stream);
 		std::ifstream* openDeviceStream();
 		void registerMacro(Macro macro);
-		void unregisterMacro(Macro macro);
 		void startMacros();
 		void governMacros();
 		

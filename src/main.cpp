@@ -25,8 +25,8 @@
 
 using std::string, std::cout, std::endl;
 
-char getSafeChar(std::string str, short pos) {
-    if (pos >= 0 && pos < str.size()) return str.at(pos);
+char getSafeChar(std::string str, size_t pos) {
+    if (pos < str.size()) return str.at(pos);
 	throw std::out_of_range("Invalid character position.");
 }
 
@@ -41,6 +41,8 @@ int strToInt(std::string str, int defaultValue) {
 }
 
 void signalHandler(int val) {
+	(void)val;
+
     signal(SIGINT, signalHandler);
 	exit(0);
 }

@@ -41,7 +41,7 @@ bool DeviceManager::hasDevices() {
 }
 
 int DeviceManager::getDeviceIndex(std::string devicePath) {
-    for (int i = 0; i < devices.size(); i++)
+    for (size_t i = 0; i < devices.size(); i++)
         if (devicePath == devices.at(i)->getDevicePath()) 
             return i;
     return -1;
@@ -65,5 +65,8 @@ void DeviceManager::bindMacro(std::string devicePath, Macro macro) {
 }
 
 std::string DeviceManager::findNextDevice(const std::string& path, unsigned short typeFilter) {
+    (void)path;
+    (void)typeFilter;
+
     return "Unimplemented";
 }
