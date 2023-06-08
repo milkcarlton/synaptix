@@ -19,6 +19,9 @@ class Loader {
 		void load(DeviceManager& manager, KeyboardMap& keyMap);
 
 	private:
+        Loader(const Loader&) = delete;
+        Loader& operator=(const Loader&);
+
 		DiskUtils* disk;
         Input* input;
 };

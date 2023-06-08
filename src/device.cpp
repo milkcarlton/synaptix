@@ -14,6 +14,7 @@ MacroDevice::MacroDevice(std::string path) {
     this->devicePath = path;
     this->macros = std::vector<Macro>();
 	this->deviceStream = openDeviceStream();
+    this->governorThread = 0;
 }
 
 MacroDevice::~MacroDevice() {
