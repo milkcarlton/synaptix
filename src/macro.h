@@ -24,8 +24,8 @@ struct PlaybackBind {
 
 class Macro {
     public:
-        Macro(std::string name, Input* input, ActivatorBind activator);
-        Macro(std::string name, Input* input);
+        Macro(const std::string& name, Input* input, ActivatorBind activator);
+        Macro(const std::string& name, Input* input);
         ~Macro();
         void playMacro(ActivatorType value);
         bool isActivator(unsigned short type, unsigned short keycode, ActivatorType value);

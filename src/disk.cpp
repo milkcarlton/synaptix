@@ -5,7 +5,7 @@
 
 #include "disk.h"
 
-DiskUtils::DiskUtils(std::string rootDir) {
+DiskUtils::DiskUtils(const std::string& rootDir) {
     if (rootDir != "")
         this->rootDirectory = rootDir;
     else

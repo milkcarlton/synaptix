@@ -5,7 +5,7 @@
 
 class DiskUtils {
     public:
-        DiskUtils(std::string rootDir);
+        explicit DiskUtils(const std::string& rootDir);
         DiskUtils();
         ~DiskUtils();
 

@@ -8,19 +8,17 @@
 
 class KeyboardMap {
     public:
-        KeyboardMap(DiskUtils* disk);
-        KeyboardMap();
+        explicit KeyboardMap(DiskUtils* disk);
         ~KeyboardMap();
         
         unsigned int getKeyValue(std::string keyStr);
         std::string getKeyAlias(unsigned int keyVal);
 
-        bool sourceKeyMap(std::string path);
+        bool sourceKeyMap(const std::string& path);
         void genKeyMapFromSrcDefs(bool show = false, std::string path = "/usr/include/linux/input-event-codes.h");
 
     private:
         DiskUtils* disk;
-        int file_descriptor;
         std::unordered_map<std::string, unsigned int> keyMap;
 
         void insertKey(std::string keyAlias, unsigned int keyVal);

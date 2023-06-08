@@ -34,7 +34,7 @@ int strToInt(std::string str, int defaultValue) {
 	int result;
 	try {
        	result = std::stoi(str);
-   	} catch (std::invalid_argument& e) {
+   	} catch (const std::invalid_argument& e) {
 		result = defaultValue;
    	}
 	return result;
@@ -62,7 +62,7 @@ void printImproper() {
     std::cout << "Improper command usage. Run with -h for help!" << std::endl;
 }
 
-void printHelp(std::string helpFor) {
+void printHelp(const std::string& helpFor) {
 	if (helpFor == "" || helpFor == "h") {
 		std::cout << "usage: synaptix <operation> [...]" << std::endl;
 		std::cout << "operations:" << std::endl;
@@ -88,12 +88,12 @@ void printHelp(std::string helpFor) {
 	}
 }
 
-void recordMacro(std::string devicePath, std::string outputPath, int typeFilter, KeyboardMap& kb) {
+void recordMacro(const std::string& devicePath, const std::string& outputPath, int typeFilter, KeyboardMap& kb) {
     MacroDevice mdev = MacroDevice(devicePath);
 	mdev.recordMacro(kb, typeFilter, outputPath);
 }
 
-void monitorDevice(std::string devicePath, int typeFilter) {
+void monitorDevice(const std::string& devicePath, int typeFilter) {
 	std::cout << "Monitoring Device Input..." << std::endl;
     MacroDevice mdev = MacroDevice(devicePath);
     mdev.inspectDevice(typeFilter);

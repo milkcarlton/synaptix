@@ -8,9 +8,7 @@
 #include <sys/select.h>
 #include "device_manager.h"
 
-DeviceManager::DeviceManager() {
-    devices = std::vector<MacroDevice*>(); 
-}
+DeviceManager::DeviceManager() : devices(std::vector<MacroDevice*>()) { }
 
 DeviceManager::~DeviceManager() {
     auto it = devices.begin();
@@ -28,11 +26,11 @@ void DeviceManager::showDevices() {
         std::cout << "\t- " << md->getDevicePath() << std::endl;
 }
 
-MacroDevice* DeviceManager::getDevice(std::string devicePath) {
+MacroDevice* DeviceManager::getDevice(const std::string& devicePath) {
     return devices.at(getDeviceIndex(devicePath));
 }
 
-bool DeviceManager::hasDevice(std::string devicePath) {
+bool DeviceManager::hasDevice(const std::string& devicePath) {
     return getDeviceIndex(devicePath) != -1;
 }
 
@@ -40,14 +38,14 @@ bool DeviceManager::hasDevices() {
    return (devices.size() > 0); 
 }
 
-int DeviceManager::getDeviceIndex(std::string devicePath) {
+int DeviceManager::getDeviceIndex(const std::string& devicePath) {
     for (size_t i = 0; i < devices.size(); i++)
         if (devicePath == devices.at(i)->getDevicePath()) 
             return i;
     return -1;
 }
 
-int DeviceManager::attachDevice(std::string devicePath, bool startMacros) {
+int DeviceManager::attachDevice(const std::string& devicePath, bool startMacros) {
     int deviceIndex = getDeviceIndex(devicePath);
     if (deviceIndex == -1) {
         MacroDevice* device = new MacroDevice(devicePath);
@@ -59,7 +57,7 @@ int DeviceManager::attachDevice(std::string devicePath, bool startMacros) {
     return deviceIndex;
 }
 
-void DeviceManager::bindMacro(std::string devicePath, Macro macro) {
+void DeviceManager::bindMacro(const std::string& devicePath, const Macro& macro) {
     MacroDevice* device = devices.at(attachDevice(devicePath));
     device->registerMacro(macro);
 }

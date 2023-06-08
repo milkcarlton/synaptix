@@ -8,7 +8,7 @@
 
 #include "input.h"
 
-Input::Input(std::string path) {
+Input::Input(const std::string& path) {
 	this->fildes = open(path.c_str(), O_WRONLY | O_NONBLOCK);
 	if (this->fildes == -1) {
         throw std::invalid_argument(

@@ -15,7 +15,7 @@
 
 class MacroDevice {
 	public:
-		MacroDevice(std::string path);
+		explicit MacroDevice(std::string path);
 		~MacroDevice();
 		
 		input_event readDevice();

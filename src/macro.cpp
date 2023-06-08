@@ -1,14 +1,14 @@
 #include <thread>
 #include "macro.h"
 
-Macro::Macro(std::string name, Input* input, ActivatorBind activator) {
+Macro::Macro(const std::string& name, Input* input, ActivatorBind activator) {
 	this->macroName = name;
     this->input = input;
 	this->responseSequence = std::vector<PlaybackBind>();
     setActivator(activator);
 }
 
-Macro::Macro(std::string name, Input* input) : Macro(name, input, { 0, 0, NONE }) { }
+Macro::Macro(const std::string& name, Input* input) : Macro(name, input, { 0, 0, NONE }) { }
 
 Macro::~Macro() {
 	

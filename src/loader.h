@@ -12,7 +12,7 @@
 
 class Loader {
 	public:
-        Loader(DiskUtils* disk);
+        explicit Loader(DiskUtils* disk);
 		~Loader();
 		
 		Macro loadMacro(std::string path, KeyboardMap& keyMap);

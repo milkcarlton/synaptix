@@ -21,17 +21,7 @@ KeyboardMap::KeyboardMap(DiskUtils* disk) {
         this->genKeyMapFromSrcDefs();
 }
 
-KeyboardMap::KeyboardMap() {
-    this->file_descriptor = open("/dev/tty0", O_RDWR);
-    if (file_descriptor == -1) {
-        perror("Failed to open device");
-        throw std::invalid_argument("Invalid device for keyboard mapping!");
-    }
-}
-
-KeyboardMap::~KeyboardMap() {
-    close(file_descriptor);
-}
+KeyboardMap::~KeyboardMap() { }
 
 unsigned int KeyboardMap::getKeyValue(std::string keyStr) {
     if (keyMap.count(keyStr))
@@ -41,12 +31,16 @@ unsigned int KeyboardMap::getKeyValue(std::string keyStr) {
 }
 
 std::string KeyboardMap::getKeyAlias(unsigned int keyVal) {
-    for (auto key : keyMap) {
-        if (key.second == keyVal)
-            return key.first;
-    }
-    
-    return "Not Found";
+    std::unordered_map<std::string, unsigned int>::iterator it; 
+    it = std::find_if(keyMap.begin(), keyMap.end(), 
+        [&keyVal](const std::unordered_map<std::string, unsigned int>::value_type& key) -> bool { 
+            return key.second == keyVal; 
+    });
+
+    if (it != keyMap.end())
+        return it->first; 
+    else
+        return "Not Found";
 }
 
 void KeyboardMap::insertKey(std::string keyAlias, unsigned int keyVal) {
@@ -85,7 +79,7 @@ void KeyboardMap::genKeyMapFromSrcDefs(bool show, std::string path) {
                     keyVal = std::stoul(tokens[1], 0, 16);
                 else
                     keyVal = std::stoul(tokens[1]);
-            } catch(std::exception &err) {
+            } catch(const std::exception &err) {
                 continue;
             }
             this->insertKey(keyAlias, keyVal);
@@ -102,7 +96,7 @@ void KeyboardMap::genKeyMapFromSrcDefs(bool show, std::string path) {
     }
 }
 
-bool KeyboardMap::sourceKeyMap(std::string path) {
+bool KeyboardMap::sourceKeyMap(const std::string& path) {
     std::ifstream keyConfig(path + "/keymap.conf");
     
     if (keyConfig.is_open()) {

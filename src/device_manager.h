@@ -11,12 +11,12 @@ class DeviceManager {
         DeviceManager();
         ~DeviceManager();
         
-		bool hasDevice(std::string devicePath);
+		bool hasDevice(const std::string& devicePath);
 		bool hasDevices();
-		MacroDevice* getDevice(std::string devicePath);
-		int getDeviceIndex(std::string devicePath);
-        int attachDevice(std::string devicePath, bool startMacros = true);
-		void bindMacro(std::string devicePath, Macro macro);
+		MacroDevice* getDevice(const std::string& devicePath);
+		int getDeviceIndex(const std::string& devicePath);
+        int attachDevice(const std::string& devicePath, bool startMacros = true);
+		void bindMacro(const std::string& devicePath, const Macro& macro);
         void showDevices();
     
         std::string findNextDevice(const std::string& devicePath, unsigned short typeFilter);

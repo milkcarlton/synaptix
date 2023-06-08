@@ -10,7 +10,7 @@
 
 class Input {
 	public:
-		Input(std::string path = "/dev/uinput");
+		explicit Input(const std::string& path = "/dev/uinput");
 		~Input();
        	
 		unsigned int getSymToKeycode(unsigned int keysym);

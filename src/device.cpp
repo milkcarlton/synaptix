@@ -107,7 +107,7 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
         }
 
 		if (e.type == typeFilter || typeFilter == -1) {
-			milliseconds timeCur = duration_cast<milliseconds>(
+			timeCur = duration_cast<milliseconds>(
 				system_clock::now().time_since_epoch()
 			);
 			
@@ -141,7 +141,7 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 	}
 
 	for (size_t i = 0; i < result.size(); i++) {
-		PlaybackBind& b = result.at(i);
+		const PlaybackBind& b = result.at(i);
         std::string keyAlias = kbm.getKeyAlias(b.bind);
         if (keyAlias == "Not Found") continue;
 
