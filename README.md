@@ -6,7 +6,7 @@ I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Syna
 
 ## Overview
 1. Ensure the uinput module is loaded (`lsmod | grep uinput`)
-    * If the module is not found, then load it (`sudo modprobe uinput`)
+    * If it is not, then load it with `sudo modprobe uinput`
 1. Build Synaptix
     * Create a `bin` directory, and run `cmake CMakeLists.txt && make`
 1. Add desired configuration files to (`~/.config/synaptix`)
@@ -22,8 +22,8 @@ I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Syna
     * The delay in milliseconds until the next line of the macro is executed (ie: `16`)
     * Ex: `q 2   16`
 
-1. The name of an input is derived from it's assignment in the list of [Linux UAPI input event codes](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h).
-    * You can view the corresponding header file, or run `synaptix -g` to to have a list displayed in your terminal.
+1. The name of an input is derived from its assignment in the list of [Linux UAPI input event codes](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h).
+    * You can view the corresponding header file, or run `synaptix -g` to display a list in your terminal.
     * Keys have no prefix, while buttons are prefixed by `btn_` (ie: btn_middle)
 
 ### Binding a macro to an input device
