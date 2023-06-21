@@ -2,7 +2,7 @@
 
 ## About
 Synaptix is a Linux application designed to bind device input events to other forms of input. 
-I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Synaptix) to work with my ancient Razer Taipan mouse, but it should work with any input device. I am still developing this project in my free time, so leave any suggestions you have or use it however you wish!
+I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Synaptix) to work with my ancient Razer Taipan mouse, but it should work with any input device.
 
 ## Overview
 1. Ensure the uinput module is loaded (`lsmod | grep uinput`)
