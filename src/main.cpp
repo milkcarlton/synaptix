@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <exception>
-#include <iostream>
+#include <iostream> 
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -14,6 +14,7 @@
 #include "disk.h"
 #include "keyboard.h"
 #include "loader.h"
+#include "build.h"
 
 using std::string, std::cout, std::endl;
 
@@ -54,11 +55,16 @@ void printImproper() {
     std::cout << "Improper command usage. Run with -h for help!" << std::endl;
 }
 
+void printVersion() {
+    std::cout << "Synaptix version: " << PROJECT_VERSION << std::endl;
+}
+
 void printHelp(const std::string& helpFor) {
 	if (helpFor == "" || helpFor == "h") {
 		std::cout << "usage: synaptix <operation> [...]" << std::endl;
 		std::cout << "operations:" << std::endl;
 		std::cout << "  synaptix {-h}   [modifiers] - Display this text and exit" << std::endl;
+		std::cout << "  synaptix {-v}   [modifiers] - Display the program version and exit" << std::endl;
     	std::cout << "  synaptix {-l}   [modifiers] - Load and run config file" << std::endl;
     	std::cout << "  synaptix {-i}   [modifiers] - Inspect input device" << std::endl;
     	std::cout << "  synaptix {-r}   [modifiers] - Record macro" << std::endl;
@@ -166,6 +172,7 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		keyMap.genKeyMapFromSrcDefs(true);
 	} else if (inputMap->count("-t")) {
 		printImproper();
+<<<<<<< HEAD
 	} else if (inputMap->count("-n")) {
 		if (inputMap->count("-d"))
 			MacroDevice::printDeviceInfo(inputMap->at("-d"), true);
@@ -176,6 +183,10 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		for (const auto& entry : std::filesystem::directory_iterator(rootDir))
 			if (std::filesystem::is_character_file(entry))
 				MacroDevice::printDeviceInfo(entry.path());
+=======
+	} else if (inputMap->count("-v")) {
+		printVersion();
+>>>>>>> 1ef07e4 (Added version flag and cmake entry)
 	} else if (inputMap->count("-b")) {
 		std::cout << "TODO: Implement one-time bind testing" << std::endl;
 	} else {

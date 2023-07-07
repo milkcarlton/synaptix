@@ -1,0 +1,7 @@
+#ifndef BUILD_H
+#define BUILD_H
+
+#define PROJECT_VERSION "@PROJECT_VERSION@"
+
+#endif
+
