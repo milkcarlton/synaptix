@@ -32,7 +32,7 @@ Input::Input(const std::string& path) {
 	setup.id.bustype = BUS_USB;
 	setup.id.vendor = 0x0734;
 	setup.id.product = 0x0078;
-	strcpy(setup.name, "Synaptix Input");
+	strcpy(setup.name, "Virtual Input");
 	
 	ioctl(fildes, UI_DEV_SETUP, &setup);
 	ioctl(fildes, UI_DEV_CREATE);

@@ -1,6 +1,14 @@
 #include <chrono>
 #include <filesystem>
 #include <vector>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/mtio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <linux/input.h>
+
 #include "device.h"
 #include "keyboard.h"
 
@@ -28,6 +36,24 @@ MacroDevice::~MacroDevice() {
 	delete deviceStream;
 }
 
+std::string MacroDevice::getDeviceName(const std::string& path) {
+    const int nameLength = 256;
+    char deviceName[nameLength];
+    int fileDescriptor = open(path.c_str(), O_RDONLY);
+    ioctl(fileDescriptor, EVIOCGNAME(nameLength), deviceName);
+    close(fileDescriptor);
+    return deviceName;
+}
+
+void MacroDevice::printDeviceInfo(const std::string& path, bool extended) {
+	std::string deviceName = MacroDevice::getDeviceName(path);
+	std::cout << path << ":\t" << deviceName << std::endl;
+    if (extended) {
+	    std::cout << "--------------------------------------" << std::endl;
+        
+    }
+}
+
 void MacroDevice::registerMacro(Macro macro) {
     macros.push_back(macro);
 }
@@ -44,7 +70,8 @@ input_event MacroDevice::readDevice(std::ifstream* stream) {
 
 std::ifstream* MacroDevice::openDeviceStream() {
 	std::ifstream* input_file = new std::ifstream();
-	std::cout << "# Opening Device [\'" << devicePath << "\']" << std::endl;
+	std::cout << "# Opening Device [\'" << devicePath << "\']" << " - [\'" << 
+        getDeviceName(devicePath) << "\']" << std::endl;
 	input_file->open(devicePath, std::ios::binary | std::ios::in);
 	return input_file;
 }

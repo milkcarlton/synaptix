@@ -39,6 +39,9 @@ class MacroDevice {
 		bool operator==(const MacroDevice& other) {
     		return this->devicePath == other.devicePath;
 		}
+		
+		static std::string getDeviceName(const std::string& path);
+		static void printDeviceInfo(const std::string& path, bool extended = false);
 
 	private:
 		bool running = false;

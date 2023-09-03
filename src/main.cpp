@@ -66,25 +66,34 @@ void printHelp(const std::string& helpFor) {
 	if (helpFor == "" || helpFor == "h") {
 		std::cout << "usage: synaptix <operation> [...]" << std::endl;
 		std::cout << "operations:" << std::endl;
-		std::cout << "  synaptix {-h}\t[options] - Display this help and exit" << std::endl;
-    	std::cout << "  synaptix {-l}\t[options] - Load and run config file" << std::endl;
-    	std::cout << "  synaptix {-i}\t[options] - Inspect input device" << std::endl;
-    	std::cout << "  synaptix {-r}\t[options] - Record macro" << std::endl;
+		std::cout << "  synaptix {-h}   [modifiers] - Display this text and exit" << std::endl;
+    	std::cout << "  synaptix {-l}   [modifiers] - Load and run config file" << std::endl;
+    	std::cout << "  synaptix {-i}   [modifiers] - Inspect input device" << std::endl;
+    	std::cout << "  synaptix {-r}   [modifiers] - Record macro" << std::endl;
+    	std::cout << "  synaptix {-n}   [modifiers] - Get input device name" << std::endl;
+    	std::cout << "  synaptix {-ls}  [modifiers] - Show device names" << std::endl;
 		std::cout << std::endl;
-    	std::cout << "run \'synaptix -h\' with an operation for further help" << std::endl;
+    	std::cout << "run \'synaptix -h\' followed by an operation for additional information" << std::endl;
     	std::cout << "\tex: \'synaptix -h r\'" << std::endl;
 	} else if (helpFor == "l") {
 		std::cout << "usage: synaptix {-l} (optional config path)" << std::endl;
-		std::cout << "options:" << std::endl;
 	} else if (helpFor == "i") {
-		std::cout << "usage: synaptix {-i} (optional input filter) [options]" << std::endl;
-		std::cout << "options:" << std::endl;
+		std::cout << "usage: synaptix {-i} (optional input filter) [modifiers]" << std::endl;
+		std::cout << "modifiers:" << std::endl;
 		std::cout << "  -d <path> (required)\tEvent path of desired input device" << std::endl;
 	} else if (helpFor == "r") {
-		std::cout << "usage: synaptix {-r} (optional input filter) [options]" << std::endl;
-		std::cout << "options:" << std::endl;
+		std::cout << "usage: synaptix {-r} (optional input filter) [modifiers]" << std::endl;
+		std::cout << "modifiers:" << std::endl;
 		std::cout << "  -d <path> (required)\tDesired keyboard event device path" << std::endl;
 		std::cout << "  -o <path> (optional)\tOutput path for recorded macro" << std::endl;
+	} else if (helpFor == "n") {
+		std::cout << "usage: synaptix {-n} [modifiers]" << std::endl;
+		std::cout << "modifiers:" << std::endl;
+		std::cout << "  -d <path> (required)\tDesired event path" << std::endl;
+	} else if (helpFor == "ls") {
+		std::cout << "usage: synaptix {-ls} [modifiers]" << std::endl;
+		std::cout << "modifiers:" << std::endl;
+		std::cout << "  -d <path> (optional)\tPath to directory of events" << std::endl;
 	}
 }
 
@@ -165,6 +174,16 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		keyMap.genKeyMapFromSrcDefs(true);
 	} else if (inputMap->count("-t")) {
 		printImproper();
+	} else if (inputMap->count("-n")) {
+		if (inputMap->count("-d"))
+			MacroDevice::printDeviceInfo(inputMap->at("-d"), true);
+		else printImproper();
+	} else if (inputMap->count("-ls")) {
+		std::string rootDir = "/dev/input/";
+		if (inputMap->count("-d")) rootDir = inputMap->at("-d");
+		for (const auto& entry : std::filesystem::directory_iterator(rootDir))
+			if (std::filesystem::is_character_file(entry))
+				MacroDevice::printDeviceInfo(entry.path());
 	} else if (inputMap->count("-b")) {
 		std::cout << "TODO: Implement one-time bind testing" << std::endl;
 	} else {
