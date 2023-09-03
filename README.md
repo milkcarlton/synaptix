@@ -28,8 +28,11 @@ I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Syna
 
 ### Binding a macro to an input device
 1. Determine which event in `/dev/input` to use (ie, my keyboard: `/dev/input/event3`).
-    * Symlinks under `by-id` may help make this more obvious.
-    * Running `./synaptix -d [event path] -i (event type)` can also help by outputting event data to the terminal.
+    * The following commands may help narrow down your desired event path:
+    * `./synaptix -ls` outputs the name of each event.
+    * `./synaptix -d [event path] -n` reveals more information about a specific event.
+    * `./synaptix -d [event path] -i (event type)` outputs event data to the terminal.
+    * Prefer using a symlink under `by-id` if possible, as they are more consistent over time.
     * Note: event type should most often just be left as `1`, but other options can be found [here](https://github.com/torvalds/linux/blob/dbfa18c5d7695766f24c0c140204e1f8c921fb95/include/uapi/linux/input-event-codes.h#L39).
 
 1. Use the command above to determine the desired activator code.
