@@ -1,12 +1,16 @@
-#include <chrono>
-#include <thread>
-#include <cstring>
-#include <errno.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <linux/uinput.h>
-
 #include "input.h"
+#include <bits/chrono.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <linux/input-event-codes.h>
+#include <linux/input.h>
+#include <linux/uinput.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <cstring>
+#include <stdexcept>
+#include <thread>
 
 Input::Input(const std::string& path) {
 	this->fildes = open(path.c_str(), O_WRONLY | O_NONBLOCK);

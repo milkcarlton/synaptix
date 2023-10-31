@@ -1,12 +1,8 @@
-#include <ios>
-#include <thread>
-#include <stdio.h>
-#include <fstream>
-#include <unistd.h>
-#include <iostream>
-#include <algorithm>
-#include <sys/select.h>
 #include "device_manager.h"
+#include "device.h"
+#include <stdio.h>
+#include <iostream>
+class Macro;
 
 DeviceManager::DeviceManager() : devices(std::vector<MacroDevice*>()) { }
 

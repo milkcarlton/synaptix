@@ -3,10 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
-
-#include "keyboard.h"
-#include "input.h"
+class Input;
 
 enum ActivatorType { RELEASE, PRESS, HELD, NONE };
 

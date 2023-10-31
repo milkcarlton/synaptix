@@ -1,9 +1,8 @@
-#include <pwd.h>
-#include <stdexcept>
-#include <sys/capability.h>
-#include <unistd.h>
-
 #include "disk.h"
+#include <pwd.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdexcept>
 
 DiskUtils::DiskUtils(const std::string& rootDir) {
     if (rootDir != "")

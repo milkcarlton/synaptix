@@ -3,8 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-
-#include "disk.h"
+class DiskUtils;
 
 class KeyboardMap {
     public:

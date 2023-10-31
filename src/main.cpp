@@ -1,27 +1,19 @@
-#include <unordered_map>
-#include <filesystem>
-#include <algorithm>
-#include <iostream>
-#include <cstdlib>
-#include <cstdio>
-#include <cmath>
-#include <string>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <fstream>
+#include <bits/chrono.h>
 #include <signal.h>
 #include <unistd.h>
-#include <sys/time.h>
-#include <sys/capability.h>
-
-#include "disk.h"
-#include "macro.h"
+#include <cstdlib>
+#include <exception>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <unordered_map>
+#include <utility>
 #include "device.h"
-#include "loader.h"
-#include "input.h"
-#include "keyboard.h"
 #include "device_manager.h"
+#include "disk.h"
+#include "keyboard.h"
+#include "loader.h"
 
 using std::string, std::cout, std::endl;
 

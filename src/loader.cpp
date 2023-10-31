@@ -1,12 +1,14 @@
 #include "loader.h"
-
-#include <sys/capability.h>
 #include <unistd.h>
+#include <exception>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <pwd.h>
+#include "device_manager.h"
+#include "disk.h"
+#include "input.h"
+#include "keyboard.h"
 
 Loader::Loader(DiskUtils* disk) {
     this->disk = disk;

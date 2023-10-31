@@ -1,14 +1,12 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include <cstdio>
 #include <string>
-
-#include "disk.h"
-#include "input.h"
-#include "device.h"
-#include "keyboard.h"
-#include "device_manager.h"
+#include "macro.h"
+class DeviceManager;
+class DiskUtils;
+class Input;
+class KeyboardMap;
 
 class Loader {
 	public:

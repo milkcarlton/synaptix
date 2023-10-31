@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <string>
-#include "device.h"
-#include "macro.h"
+class Macro;
+class MacroDevice;
 
 class DeviceManager {
     public:

@@ -2,11 +2,6 @@
 #define AGNOSTIC_INPUT_H
 
 #include <string>
-#include <iostream>
-#include <cstdlib>
-#include <cstdio>
-#include <linux/input.h>
-#include <linux/input-event-codes.h>
 
 class Input {
 	public:

@@ -1,16 +1,12 @@
-#include <chrono>
-#include <filesystem>
-#include <vector>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/mtio.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <linux/input.h>
-
 #include "device.h"
 #include "keyboard.h"
+#include <bits/chrono.h>
+#include <stddef.h>
+#include <filesystem>
+#include <iostream>
+#include <ratio>
+#include <stdexcept>
+#include <vector>
 
 using std::chrono::milliseconds;
 using std::chrono::duration_cast;

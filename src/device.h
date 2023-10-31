@@ -1,17 +1,13 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include "macro.h"
+#include <linux/input.h>
+#include <fstream>
 #include <string>
 #include <thread>
 #include <vector>
-#include <iostream>
-#include <cstdlib>
-#include <cstdio>
-#include <fstream>
-#include <linux/input.h>
-#include <linux/input-event-codes.h>
-
-#include "macro.h"
+class KeyboardMap;
 
 class MacroDevice {
 	public:

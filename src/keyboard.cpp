@@ -1,19 +1,14 @@
 #include "keyboard.h"
-
-#include <fcntl.h>
-#include <linux/kd.h>
-#include <linux/keyboard.h>
-#include <unistd.h>
-#include <stdexcept>
-#include <sys/ioctl.h>
-#include <cstdlib>
-#include <iostream>
-#include <cstdio>
-#include <fstream>
-#include <vector>
-#include <sstream>
-#include <filesystem>
+#include <ctype.h>
 #include <algorithm>
+#include <cstdio>
+#include <exception>
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include "disk.h"
 
 KeyboardMap::KeyboardMap(DiskUtils* disk) {
     this->disk = disk;
