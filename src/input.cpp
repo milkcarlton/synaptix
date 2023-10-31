@@ -73,7 +73,9 @@ void Input::playBind(unsigned int keycode) {
 void Input::playBind(unsigned int keycode, unsigned short state, unsigned short delay) {
 	if (state == 2) {
 		emitKeycode(keycode, true);	
-		emitKeycode(keycode, false);	
+		emitKeycode(keycode, false);
+	} else if (state == 3) {
+		emitKeycode(keycode, state);	
 	} else {
 		if (state > 0) state = 1;
 		emitKeycode(keycode, state);	

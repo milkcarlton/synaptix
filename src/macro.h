@@ -5,7 +5,7 @@
 #include <vector>
 class Input;
 
-enum ActivatorType { RELEASE, PRESS, HELD, NONE };
+enum ActivatorType { RELEASE, PRESS, HELD, MATCH, NONE };
 
 struct ActivatorBind {
     unsigned short eventType;
