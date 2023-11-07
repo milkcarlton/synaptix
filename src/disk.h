@@ -4,13 +4,13 @@
 #include <string>
 
 class DiskUtils {
-    public:
-        explicit DiskUtils(const std::string& rootDir);
-        DiskUtils();
-        ~DiskUtils();
+		public:
+				explicit DiskUtils(const std::string& rootDir);
+				DiskUtils();
+				~DiskUtils();
 
 		std::string rootDir();
-    private:
+		private:
 		std::string rootDirectory = "";
 };
 

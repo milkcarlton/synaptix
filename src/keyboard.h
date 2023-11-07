@@ -6,21 +6,21 @@
 class DiskUtils;
 
 class KeyboardMap {
-    public:
-        explicit KeyboardMap(DiskUtils* disk);
-        ~KeyboardMap();
-        
-        unsigned int getKeyValue(std::string keyStr);
-        std::string getKeyAlias(unsigned int keyVal);
+	public:
+		explicit KeyboardMap(DiskUtils* disk);
+		~KeyboardMap();
+		
+		unsigned int getKeyValue(std::string keyStr);
+		std::string getKeyAlias(unsigned int keyVal);
 
-        bool sourceKeyMap(const std::string& path);
-        void genKeyMapFromSrcDefs(bool show = false, std::string path = "/usr/include/linux/input-event-codes.h");
+		bool sourceKeyMap(const std::string& path);
+		void genKeyMapFromSrcDefs(bool show = false, std::string path = "/usr/include/linux/input-event-codes.h");
 
-    private:
-        DiskUtils* disk;
-        std::unordered_map<std::string, unsigned int> keyMap;
+	private:
+		DiskUtils* disk;
+		std::unordered_map<std::string, unsigned int> keyMap;
 
-        void insertKey(std::string keyAlias, unsigned int keyVal);
+		void insertKey(std::string keyAlias, unsigned int keyVal);
 };
 
 #endif

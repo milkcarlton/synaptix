@@ -33,7 +33,7 @@ class MacroDevice {
 		const std::string getDevicePath() { return devicePath; }
 
 		bool operator==(const MacroDevice& other) {
-    		return this->devicePath == other.devicePath;
+			return this->devicePath == other.devicePath;
 		}
 		
 		static std::string getDeviceName(const std::string& path);
@@ -44,7 +44,7 @@ class MacroDevice {
 		std::string devicePath;
 		std::vector<Macro> macros;
 		std::ifstream* deviceStream;
-        std::thread* governorThread;
+		std::thread* governorThread;
 };
 
 #endif

@@ -22,45 +22,45 @@ using std::chrono::duration_cast;
 using std::chrono::system_clock;
 
 MacroDevice::MacroDevice(std::string path) {
-    if (!std::filesystem::exists(path))
-        throw std::invalid_argument("Device @ [\'" + path + "\'] not found!");
-    this->devicePath = path;
-    this->macros = std::vector<Macro>();
+	if (!std::filesystem::exists(path))
+		throw std::invalid_argument("Device @ [\'" + path + "\'] not found!");
+	this->devicePath = path;
+	this->macros = std::vector<Macro>();
 	this->deviceStream = openDeviceStream();
-    this->governorThread = nullptr;
+	this->governorThread = nullptr;
 }
 
 MacroDevice::~MacroDevice() {
-    if (running) {
-        this->toggleMacros(false);
-        governorThread->join();
-        delete governorThread;
-    } 
+	if (running) {
+		this->toggleMacros(false);
+		governorThread->join();
+		delete governorThread;
+	} 
 
 	deviceStream->close();
 	delete deviceStream;
 }
 
 std::string MacroDevice::getDeviceName(const std::string& path) {
-    const int nameLength = 256;
-    char deviceName[nameLength];
-    int fileDescriptor = open(path.c_str(), O_RDONLY);
-    ioctl(fileDescriptor, EVIOCGNAME(nameLength), deviceName);
-    close(fileDescriptor);
-    return deviceName;
+	const int nameLength = 256;
+	char deviceName[nameLength];
+	int fileDescriptor = open(path.c_str(), O_RDONLY);
+	ioctl(fileDescriptor, EVIOCGNAME(nameLength), deviceName);
+	close(fileDescriptor);
+	return deviceName;
 }
 
 void MacroDevice::printDeviceInfo(const std::string& path, bool extended) {
 	std::string deviceName = MacroDevice::getDeviceName(path);
 	std::cout << path << ":\t" << deviceName << std::endl;
-    if (extended) {
-	    std::cout << "--------------------------------------" << std::endl;
-        
-    }
+	if (extended) {
+		std::cout << "--------------------------------------" << std::endl;
+		
+	}
 }
 
 void MacroDevice::registerMacro(Macro macro) {
-    macros.push_back(macro);
+	macros.push_back(macro);
 }
 
 input_event MacroDevice::readDevice() {
@@ -76,19 +76,19 @@ input_event MacroDevice::readDevice(std::ifstream* stream) {
 std::ifstream* MacroDevice::openDeviceStream() {
 	std::ifstream* input_file = new std::ifstream();
 	std::cout << "# Opening Device [\'" << devicePath << "\']" << " - [\'" << 
-        getDeviceName(devicePath) << "\']" << std::endl;
+		getDeviceName(devicePath) << "\']" << std::endl;
 	input_file->open(devicePath, std::ios::binary | std::ios::in);
 	return input_file;
 }
 
 void MacroDevice::governMacros() {
-    while (running) {
+	while (running) {
 		input_event e = readDevice();
-        for (Macro& m : macros) {
-            if (m.isActivator(e.type, e.code, ActivatorType(e.value)))
-                m.playMacro(ActivatorType(e.value));
+		for (Macro& m : macros) {
+			if (m.isActivator(e.type, e.code, ActivatorType(e.value)))
+				m.playMacro(ActivatorType(e.value));
 		}
-    }
+	}
 }
 
 void MacroDevice::inspectDevice(int typeFilter) {
@@ -120,7 +120,7 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 	std::cout << "# Recording on [ " << devicePath << " ] ..." << std::endl;
 	std::cout << "# Enter key to signal the end of the recording:" << std::endl;
 	input_event stopKey = pollUntilReceived(typeFilter, 1);
-    std::string stopKeyAlias = kbm.getKeyAlias(stopKey.code);
+	std::string stopKeyAlias = kbm.getKeyAlias(stopKey.code);
 
 	pollUntilReceived(typeFilter, 0);
 	std::cout << "# Recording input until the \'" << stopKeyAlias << "\' (" << stopKey.code << ")"
@@ -134,10 +134,10 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 
 		if (e.code == stopKey.code && e.type == stopKey.type) {
 			if (result.size() > 0 && e.value > 0)
-                break;
+				break;
 			else 
-                continue;
-        }
+				continue;
+		}
 
 		if (e.type == typeFilter || typeFilter == -1) {
 			timeCur = duration_cast<milliseconds>(
@@ -169,14 +169,14 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 	
 	if (outToFile) {
    		if (std::filesystem::exists(outputPath))
-      		throw std::invalid_argument("File @ [\'" + outputPath + "\'] already exists!");
+	  		throw std::invalid_argument("File @ [\'" + outputPath + "\'] already exists!");
 		outStream.open(outputPath, std::ios::out | std::ios::trunc);
 	}
 
 	for (size_t i = 0; i < result.size(); i++) {
 		const PlaybackBind& b = result.at(i);
-        std::string keyAlias = kbm.getKeyAlias(b.bind);
-        if (keyAlias == "Not Found") continue;
+		std::string keyAlias = kbm.getKeyAlias(b.bind);
+		if (keyAlias == "Not Found") continue;
 
 		std::cout << keyAlias << "\t" << b.state << "\t" << b.delay << std::endl;
 		if (outToFile)
@@ -188,20 +188,20 @@ void MacroDevice::recordMacro(KeyboardMap& kbm, int typeFilter, std::string outp
 
 void MacroDevice::startMacros() {
 	toggleMacros(true);
-    this->governorThread = new std::thread([this]() {
-        governMacros();
-    });
+	this->governorThread = new std::thread([this]() {
+		governMacros();
+	});
 }
 
 bool MacroDevice::toggleMacros() {
-    return toggleMacros(!running);
+	return toggleMacros(!running);
 }
 
 bool MacroDevice::toggleMacros(bool toggle) {
-    running = toggle;
-    return running;
+	running = toggle;
+	return running;
 }
 
 bool MacroDevice::isRunning() {
-    return running;
+	return running;
 }

@@ -15,20 +15,20 @@
 Input::Input(const std::string& path) {
 	this->fildes = open(path.c_str(), O_WRONLY | O_NONBLOCK);
 	if (this->fildes == -1) {
-        throw std::invalid_argument(
-            "Error opening uinput [" + path + "]: " + std::string(strerror(errno))
-        );
+		throw std::invalid_argument(
+			"Error opening uinput [" + path + "]: " + std::string(strerror(errno))
+		);
 	}
 
 	ioctl(fildes, UI_SET_EVBIT, EV_KEY);
 
-    for (int i = 0; i < KEY_CNT; i++) {
-        ioctl(fildes, UI_SET_KEYBIT, i);
-    }
+	for (int i = 0; i < KEY_CNT; i++) {
+		ioctl(fildes, UI_SET_KEYBIT, i);
+	}
 
-    for (int i = BTN_MISC; i <= BTN_GEAR_UP; i++) {
-        ioctl(fildes, UI_SET_KEYBIT, i);
-    }
+	for (int i = BTN_MISC; i <= BTN_GEAR_UP; i++) {
+		ioctl(fildes, UI_SET_KEYBIT, i);
+	}
 
 	struct uinput_setup setup;
 
@@ -51,7 +51,7 @@ Input::~Input() {
 }
 
 void Input::emitKeycode(unsigned int keycode, unsigned short state) {
-    emitEvent(EV_KEY, keycode, state);
+	emitEvent(EV_KEY, keycode, state);
 	emitEvent(EV_SYN, SYN_REPORT, 0); 
 }
 
@@ -67,7 +67,7 @@ void Input::emitEvent(unsigned short type, unsigned int code, unsigned short val
 }
 
 void Input::playBind(unsigned int keycode) {
-    playBind(keycode, 0, 0);
+	playBind(keycode, 0, 0);
 }
 
 void Input::playBind(unsigned int keycode, unsigned short state, unsigned short delay) {
@@ -80,5 +80,5 @@ void Input::playBind(unsigned int keycode, unsigned short state, unsigned short 
 		if (state > 0) state = 1;
 		emitKeycode(keycode, state);	
 	}
-    if (delay > 0) std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+	if (delay > 0) std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 }

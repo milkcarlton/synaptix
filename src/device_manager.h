@@ -7,22 +7,22 @@ class Macro;
 class MacroDevice;
 
 class DeviceManager {
-    public:
-        DeviceManager();
-        ~DeviceManager();
-        
+	public:
+		DeviceManager();
+		~DeviceManager();
+		
 		bool hasDevice(const std::string& devicePath);
 		bool hasDevices();
 		MacroDevice* getDevice(const std::string& devicePath);
 		int getDeviceIndex(const std::string& devicePath);
-        int attachDevice(const std::string& devicePath, bool startMacros = true);
+		int attachDevice(const std::string& devicePath, bool startMacros = true);
 		void bindMacro(const std::string& devicePath, const Macro& macro);
-        void showDevices();
-    
-        std::string findNextDevice(const std::string& devicePath, unsigned short typeFilter);
+		void showDevices();
+	
+		std::string findNextDevice(const std::string& devicePath, unsigned short typeFilter);
 
-    private:
-        std::vector<MacroDevice*> devices;
+	private:
+		std::vector<MacroDevice*> devices;
 };
 
 #endif

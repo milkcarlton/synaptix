@@ -8,9 +8,9 @@ class Input;
 enum ActivatorType { RELEASE, PRESS, HELD, MATCH, NONE };
 
 struct ActivatorBind {
-    unsigned short eventType;
-    unsigned short keyBinding;
-    ActivatorType responseType;
+	unsigned short eventType;
+	unsigned short keyBinding;
+	ActivatorType responseType;
 };
 
 struct PlaybackBind {
@@ -20,23 +20,23 @@ struct PlaybackBind {
 };
 
 class Macro {
-    public:
-        Macro(const std::string& name, Input* input, ActivatorBind activator);
-        Macro(const std::string& name, Input* input);
-        ~Macro();
-        void playMacro(ActivatorType value);
-        bool isActivator(unsigned short type, unsigned short keycode, ActivatorType value);
-        void addResponse(unsigned int bind, unsigned short state, unsigned short delay);
-        void setActivator(ActivatorBind activator);
+	public:
+		Macro(const std::string& name, Input* input, ActivatorBind activator);
+		Macro(const std::string& name, Input* input);
+		~Macro();
+		void playMacro(ActivatorType value);
+		bool isActivator(unsigned short type, unsigned short keycode, ActivatorType value);
+		void addResponse(unsigned int bind, unsigned short state, unsigned short delay);
+		void setActivator(ActivatorBind activator);
 
-    private:
-        void repeatMacro();
-        void playMacro();
-        std::string macroName;
-        ActivatorBind activatorBinding;
-        std::vector<PlaybackBind> responseSequence;
-        Input* input;
-        bool doRepeat = false;
+	private:
+		void repeatMacro();
+		void playMacro();
+		std::string macroName;
+		ActivatorBind activatorBinding;
+		std::vector<PlaybackBind> responseSequence;
+		Input* input;
+		bool doRepeat = false;
 };
 
 #endif
