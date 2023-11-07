@@ -35,7 +35,7 @@ I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Syna
     * Prefer using a symlink under `by-id` if possible, as they are more consistent over time.
     * Note: event type should most often just be left as `1`, but other options can be found [here](https://github.com/torvalds/linux/blob/dbfa18c5d7695766f24c0c140204e1f8c921fb95/include/uapi/linux/input-event-codes.h#L39).
 
-1. Use the command above to determine the desired activator code.
+1. Use the commands above to determine the desired activator code.
 1. Add a line to `~/.config/synaptix/synaptix.conf` containing the following information:
 
     | Macro File    | Event Path        | Event Type | Code | Playback Mode |
