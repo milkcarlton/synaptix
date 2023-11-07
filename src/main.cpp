@@ -9,6 +9,7 @@
 #include <thread>
 #include <unordered_map>
 #include <utility>
+#include <filesystem>
 #include "device.h"
 #include "device_manager.h"
 #include "disk.h"
@@ -172,7 +173,6 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		keyMap.genKeyMapFromSrcDefs(true);
 	} else if (inputMap->count("-t")) {
 		printImproper();
-<<<<<<< HEAD
 	} else if (inputMap->count("-n")) {
 		if (inputMap->count("-d"))
 			MacroDevice::printDeviceInfo(inputMap->at("-d"), true);
@@ -183,10 +183,8 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 		for (const auto& entry : std::filesystem::directory_iterator(rootDir))
 			if (std::filesystem::is_character_file(entry))
 				MacroDevice::printDeviceInfo(entry.path());
-=======
 	} else if (inputMap->count("-v")) {
 		printVersion();
->>>>>>> 1ef07e4 (Added version flag and cmake entry)
 	} else if (inputMap->count("-b")) {
 		std::cout << "TODO: Implement one-time bind testing" << std::endl;
 	} else {
