@@ -1,13 +1,48 @@
 cmake_minimum_required(VERSION 3.10)
-project(Synaptix VERSION 0.5.0)
-configure_file(src/build.h.in src/build.h)
+project(Synaptix VERSION 0.5.1)
+configure_file(src/build.hpp.in src/build.hpp)
 
+#[[ Platform checks ]]
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(LINUX TRUE)
+endif ()
+
+if (NOT LINUX)
+	message( FATAL_ERROR "Fatal Error! This application is unsupported on this system!" )
+endif()
+
+#[[ Set default build target to release ]]
+set(DEFAULT_BUILD_TYPE Release)
+if (NOT CMAKE_BUILD_TYPE)
+	message(STATUS "The build type was not set! Defaulting to ${DEFAULT_BUILD_TYPE}")
+	set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}")
+endif()
+
+#[[ Enforce expected C++ standard ]]
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#[[ Set stricter debugging flags ]]
+set(PROJECT_DEBUG_FLAGS "${PROJECT_DEBUG_FLAGS} -Wall -Wextra -Werror -DPROJ_DEBUG")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/linux)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+#[[ Generate assembler output ]]
+if (GEN_ASSEMBLER)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -S")
+endif()
 
-FILE(GLOB Sources src/*.cpp)
-add_executable(synaptix ${Sources})
+#[[ Include project headers ]]
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I ./src/")
+
+#[[ Set base files to compile ]]
+set(BASE_SOURCES src/*.cpp)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+	FILE(GLOB SOURCES ${BASE_SOURCES} src/tests/*.cpp)
+	set(EXECUTABLE ${CMAKE_PROJECT_NAME}-debug)
+else()
+	FILE(GLOB SOURCES ${BASE_SOURCES})
+	set(EXECUTABLE ${CMAKE_PROJECT_NAME}-release)
+endif()
+
+add_executable(${EXECUTABLE} ${SOURCES})

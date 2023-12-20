@@ -15,7 +15,7 @@
 #include "disk.h"
 #include "keyboard.h"
 #include "loader.h"
-#include "build.h"
+#include "build.hpp"
 
 using std::string, std::cout, std::endl;
 
