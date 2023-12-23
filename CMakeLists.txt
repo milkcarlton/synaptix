@@ -46,3 +46,4 @@ else()
 endif()
 
 add_executable(${EXECUTABLE} ${SOURCES})
+install(TARGETS ${EXECUTABLE})
