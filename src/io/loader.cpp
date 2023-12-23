@@ -5,10 +5,10 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include "device_manager.h"
+#include "../dev/device_manager.h"
+#include "../dev/keyboard_map.h"
 #include "disk.h"
 #include "input.h"
-#include "keyboard.h"
 
 Loader::Loader(DiskUtils* disk) {
 	this->disk = disk;

@@ -2,7 +2,7 @@
 #define LOADER_H
 
 #include <string>
-#include "macro.h"
+#include "../macro.h"
 class DeviceManager;
 class DiskUtils;
 class Input;

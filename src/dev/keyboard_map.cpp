@@ -1,4 +1,4 @@
-#include "keyboard.h"
+#include "keyboard_map.h"
 #include <ctype.h>
 #include <algorithm>
 #include <cstdio>
@@ -8,7 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "disk.h"
+#include "../io/disk.h"
 
 KeyboardMap::KeyboardMap(DiskUtils* disk) {
 	this->disk = disk;

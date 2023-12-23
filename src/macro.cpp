@@ -1,6 +1,6 @@
 #include "macro.h"
 #include <thread>
-#include "input.h"
+#include "io/input.h"
 
 Macro::Macro(const std::string& name, Input* input, ActivatorBind activator) {
 	this->macroName = name;

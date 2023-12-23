@@ -15,7 +15,7 @@
 #include <stdexcept>
 
 #include "device.h"
-#include "keyboard.h"
+#include "keyboard_map.h"
 
 using std::chrono::milliseconds;
 using std::chrono::duration_cast;

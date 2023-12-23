@@ -10,12 +10,12 @@
 #include <unordered_map>
 #include <utility>
 #include <filesystem>
-#include "device.h"
-#include "device_manager.h"
-#include "disk.h"
-#include "keyboard.h"
-#include "loader.h"
-#include "build.hpp"
+#include "dev/device.h"
+#include "dev/device_manager.h"
+#include "dev/keyboard_map.h"
+#include "io/disk.h"
+#include "io/loader.h"
+#include "build/build.hpp"
 
 using std::string, std::cout, std::endl;
 

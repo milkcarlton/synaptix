@@ -1,7 +1,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include "macro.h"
+#include "../macro.h"
 #include <linux/input.h>
 #include <fstream>
 #include <string>
