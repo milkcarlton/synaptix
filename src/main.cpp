@@ -195,14 +195,9 @@ void parseArguments(std::unordered_map<std::string, std::string>* inputMap) {
 }
 
 int main(int argc, char** argv) {
-	try {
-		seteuid(0);
-		auto inputMap = mapInput(argc, argv);
-		parseArguments(inputMap);
-		delete inputMap;
-	} catch (std::exception& e) {
-		std::cerr << e.what() << endl;
-	}
+	auto inputMap = mapInput(argc, argv);
+	parseArguments(inputMap);
+	delete inputMap;
 
 	return 0;
 }

@@ -61,7 +61,6 @@ void Loader::load(DeviceManager& manager, KeyboardMap& keyMap) {
 	std::string macrosPath = disk->rootDir() + "/macros";
 	std::string configPath = disk->rootDir() + "/synaptix.conf";
 	std::ifstream configFile(configPath);
-	seteuid(0);
 
 	if (configFile.is_open()) {
 		std::string line;

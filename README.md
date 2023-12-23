@@ -13,6 +13,7 @@ I wrote this as a personal substitute for Razer Synapse (Synapse + Linux => Syna
     * Example configurations are included in this repository
 1. Run the `synaptix` binary now located in the `bin` folder `./synaptix [arguments]`
     * Ex: `./bin/synaptix -l` to load the main configuration file
+    * Optionally install `synaptix` using `make install` to run from anywhere
 
 ## Configuration
 ### Writing a macro file
